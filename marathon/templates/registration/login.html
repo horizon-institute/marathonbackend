@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block header_declarations %}
+<style type="text/css">
+    h2 {
+        font-size: 16px; font-weight: bold; margin: 10px 0 5px;
+    }
+    sup {
+        font-size: .6em; vertical-align: super;
+    }
+    #login-form {
+        display: none;
+    }
+</style>
+<script type="text/javascript">
+    $(function() {
+        $("a[href^=#]").click(function() {
+            $($(this).attr("href")).slideToggle();
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<h2>Connect with 3<sup>rd</sup>-party providers</h2>
+    <ul>
+        <li><a rel="nofollow" href="{% url "socialauth_begin" "twitter" %}">Twitter</a></li>
+        <li><a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}">Google</a></li>
+    </ul>
+<h2><a href="#login-form">Connect with a Marathon-Live login</a></h2>
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}" id="login-form">
+{% csrf_token %}
+<table>
+<tr>
+    <td>{{ form.username.label_tag }}</td>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>{{ form.password.label_tag }}</td>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+
+<input type="submit" value="login" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+{% endblock %}
