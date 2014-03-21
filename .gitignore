@@ -213,7 +213,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#Project specific
 db.sqlite3
 marathonbackend/settings.py
-static
-data
+/static
+/data
