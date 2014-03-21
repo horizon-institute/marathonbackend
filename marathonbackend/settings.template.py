@@ -36,9 +36,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'oauth_provider',
     'south',
     'social_auth',
+    'provider',
+    'provider.oauth2',
     'tastypie',
     'marathon',
 )
@@ -107,3 +108,7 @@ GOOGLE_OAUTH2_CLIENT_ID      = ''
 GOOGLE_OAUTH2_CLIENT_SECRET  = ''
 
 OAUTH_REALM_KEY_NAME = 'http://marathon-live.cloudapp.net'
+
+#Login Redirect options
+
+LOGIN_REDIRECT_URL = "/"
