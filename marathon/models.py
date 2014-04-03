@@ -18,7 +18,7 @@ def distanceDecorator(model):
 # Create your models here.
 
 class GUIDModel(models.Model):
-    guid = models.CharField(max_length=40, unique=True)
+    guid = models.CharField(max_length=100, unique=True)
     
     class Meta:
         abstract = True
@@ -40,7 +40,6 @@ class RaceType(models.Model):
 
 class Race(models.Model):
     name = models.CharField(max_length=200, db_index=True)
-    start = models.DateTimeField(db_index=True)
     event = models.ForeignKey(Event, related_name="races", db_index=True)
     racetype = models.ForeignKey(RaceType, db_index=True)
     start_time = models.DateTimeField(db_index=True)
@@ -51,6 +50,7 @@ class Race(models.Model):
         super(Race, self).save(*args, **kwargs)
 
 class Finisher(models.Model):
+    name = models.CharField(max_length=200, db_index=True)
     race = models.ForeignKey(Race, related_name="runners", db_index=True)
     bib_number = models.IntegerField(db_index=True)
     start_time = models.DateTimeField(db_index=True)
@@ -92,7 +92,7 @@ class Finisher(models.Model):
     def save(self, *args, **kwargs):
         if not (self.start_time and self.finish_time):
             self._calculate_times()
-        super(Race, self).save(*args, **kwargs)
+        super(Finisher, self).save(*args, **kwargs)
     
     class Meta:
         unique_together = ("race", "bib_number")
@@ -123,8 +123,8 @@ class Video(GUIDModel):
         return self.time + datetime.timedelta(0, self.duration)
 
 @distanceDecorator
-class Tag(GUIDModel):
-    video = models.ForeignKey(Video, related_name="tags", db_index=True, null=False, blank=False)
+class RunnerTag(GUIDModel):
+    video = models.ForeignKey(Video, related_name="runnertags", db_index=True, null=False, blank=False)
     time = models.DateTimeField(db_index=True, null=False, blank=False)
     distance = models.FloatField(db_index=True, null=False, blank=False)
     latitude = models.FloatField(null=False, blank=False)
@@ -139,4 +139,9 @@ class Tag(GUIDModel):
             self.longitude = self.video.longitude
         if not self.distance and self.video:
             self.distance = self.video.distance
-        super(Tag, self).save(*args, **kwargs)
+        super(RunnerTag, self).save(*args, **kwargs)
+
+class TextTag(models.Model):
+    text = models.CharField(max_length=100,db_index=True,null=False,blank=False)
+    video = models.ForeignKey(Video, related_name="texttags", db_index=True, null=False, blank=False)
+    
