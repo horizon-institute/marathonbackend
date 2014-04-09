@@ -112,3 +112,5 @@ OAUTH_REALM_KEY_NAME = 'http://marathon-live.cloudapp.net'
 #Login Redirect options
 
 LOGIN_REDIRECT_URL = "/"
+
+SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'

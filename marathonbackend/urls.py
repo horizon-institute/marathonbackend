@@ -4,13 +4,16 @@ from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
-from marathon.api import UserResource
+from marathon.api import SpectatorResource, FinisherResource, VideoResource, RunnerTagResource
 from tastypie.api import Api
 
 admin.autodiscover()
 
 api = Api(api_name='v1')
-api.register(UserResource())
+api.register(SpectatorResource())
+api.register(FinisherResource())
+api.register(VideoResource())
+api.register(RunnerTagResource())
 
 urlpatterns = patterns('',
     # Examples:
