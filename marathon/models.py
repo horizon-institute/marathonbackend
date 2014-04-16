@@ -20,6 +20,21 @@ def distanceDecorator(model):
     make_converter(model, "distance", "km", 1000)
     return model
 
+class MyTimeDelta(object):
+    def __init__(self, val):
+        if isinstance(val,float) or isinstance(val,int):
+            self.seconds = val
+            self.timedelta = datetime.timedelta(0,val)
+        if isinstance(val,datetime.timedelta):
+            self.seconds = val.total_seconds()
+            self.timedelta = val
+    def __int__(self):
+        return self.seconds.__int__()
+    def __float__(self):
+        return self.seconds.__float__()
+    def __str__(self):
+        return self.timedelta.__str__()
+
 # Create your models here.
 
 class GUIDModel(models.Model):
@@ -78,44 +93,44 @@ class Finisher(models.Model):
     
     def _calculate_times(self):
         if hasattr(self, "_chip_time") and hasattr(self, "_gun_time") and self.race and self.race.start_time:
-            self.finish_time = self.race.start_time + datetime.timedelta(0, self._gun_time)
-            self.start_time = self.finish_time - datetime.timedelta(0, self._chip_time)
+            self.finish_time = self.race.start_time + self._gun_time.timedelta
+            self.start_time = self.finish_time - self._chip_time.timedelta
             del self._gun_time
             del self._chip_time
     
     @property
     def chip_time(self):
-        if (hasattr(self, "_chip_time")):
+        if hasattr(self, "_chip_time"):
             return self._chip_time
-        return (self.finish_time - self.start_time).seconds
+        return MyTimeDelta(self.finish_time - self.start_time)
     
     @chip_time.setter
     def chip_time(self, value):
-        self._chip_time = value
+        self._chip_time = MyTimeDelta(value)
         self._calculate_times()
     
     @property
     def gun_time(self):
         if (hasattr(self, "_gun_time")):
             return self._gun_time
-        return (self.finish_time - self.race.start_time).seconds
+        return MyTimeDelta(self.finish_time - self.race.start_time)
     
     @gun_time.setter
     def gun_time(self, value):
-        self._gun_time = value
+        self._gun_time = MyTimeDelta(value)
         self._calculate_times()
     
     @property
     def average_speed(self):
-        return float(self.race.racetype.distance) / self.chip_time
+        return self.race.racetype.distance / float(self.chip_time)
     
     @property
     def mile_pace(self):
-        return datetime.timedelta(0, METRES_PER_MILE / self.average_speed)
+        return MyTimeDelta(METRES_PER_MILE / self.average_speed)
     
     @property
     def km_pace(self):
-        return datetime.timedelta(0, 1000. / self.average_speed)
+        return MyTimeDelta(1000. / self.average_speed)
     
     def save(self, *args, **kwargs):
         if not (self.start_time and self.finish_time):
