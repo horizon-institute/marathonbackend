@@ -2,4 +2,5 @@
 
 {% block content %}
 <p>You are connected as <b style="font-weight: bold;">{{user.username}}</b></p>
+<p><a href="{% url 'django.contrib.auth.views.logout'%}?next=/">Log out</a></p>
 {% endblock %}

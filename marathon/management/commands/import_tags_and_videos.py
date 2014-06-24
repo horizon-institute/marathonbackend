@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from marathon.models import Finisher, Event, Spectator, RunnerTag, Video
+from marathon.models import Event, Spectator, RunnerTag, Video, PositionUpdate
 from django.core.management.base import BaseCommand
 from optparse import make_option
 import json
@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 print options["event_name"]
                 event = Event.objects.get(name=options["event_name"])
             else:
-                print "Please give a race name or id"
+                print "Please give an event name or id"
                 return
         else:
             event = Event.objects.get(id=options["event_id"])
@@ -79,27 +79,28 @@ class Command(BaseCommand):
                              spectator = spectator,
                              start_time = fromtimestamp(video["time"]),
                              duration = video["duration"],
-                             distance = video["position"],
-                             latitude = video["lat"],
-                             longitude = video["lon"],
                          )
                 except Exception as e:
                     print "Error with video %s: %s"%(video["_id"], e)
             
-            finishers = Finisher.objects.filter(race__event=event)
             tags = [doc for doc in docs if doc.get("type",None) == "tag"]
             print "%d tags in file, %d tags in database"%(len(tags), RunnerTag.objects.count())
             for tag in tags:
                 try:
                     video = Video.objects.get(guid=tag["videoID"])
-                    rs = finishers.filter(bib_number=tag["runnerNumber"])
                     RunnerTag.objects.create(
                                guid = tag["_id"],
-                               finisher = rs[0] if rs.count() else None,
                                runner_number = tag["runnerNumber"],
                                video = video,
                                time = fromtimestamp(tag["time"]),
-                               distance = tag["position"],
+                               accuracy = tag["positionAccuracy"],
+                               latitude = tag["lat"],
+                               longitude = tag["lon"],
+                                       )
+                    PositionUpdate.objects.create(
+                               spectator = video.spectator,
+                               time = fromtimestamp(tag["time"]),
+                               accuracy = tag["positionAccuracy"],
                                latitude = tag["lat"],
                                longitude = tag["lon"],
                                        )
