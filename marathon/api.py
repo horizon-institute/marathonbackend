@@ -74,6 +74,8 @@ class VideoAuthorization(Authorization):
     def read_detail(self, object_list, bundle):
         current_video = bundle.obj
         current_user = bundle.request.user
+        if not hasattr(current_video, "spectator"): #This would be a schema documentation request
+            return True
         if current_user.is_superuser:
             return True
         return ((current_video.spectator.user == current_user) or (current_video.public and current_video.event.public))
@@ -157,6 +159,8 @@ class RunnerTagAuthorization(Authorization):
 
     def read_detail(self, object_list, bundle):
         current_user = bundle.request.user
+        if not hasattr(bundle.obj, "video"): #This would be a schema documentation request
+            return True
         current_video = bundle.obj.video
         if (not current_user.is_superuser):
             return ((current_video.spectator.user == current_user) or (current_video.public and current_video.event.public))
