@@ -16,6 +16,8 @@ class SpectatorAuthorization(Authorization):
         return object_list.filter(user_id=current_user.id)
 
     def read_detail(self, object_list, bundle):
+        if bundle.request.method == "GET" and bundle.obj.user is None:
+            return True
         return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
 
 class SpectatorResource(resources.ModelResource):
@@ -74,7 +76,7 @@ class VideoAuthorization(Authorization):
     def read_detail(self, object_list, bundle):
         current_video = bundle.obj
         current_user = bundle.request.user
-        if not hasattr(current_video, "spectator"): #This would be a schema documentation request
+        if bundle.request.method == "GET" and not hasattr(current_video, "spectator"): #This would be a schema documentation request
             return True
         if current_user.is_superuser:
             return True
@@ -159,7 +161,7 @@ class RunnerTagAuthorization(Authorization):
 
     def read_detail(self, object_list, bundle):
         current_user = bundle.request.user
-        if not hasattr(bundle.obj, "video"): #This would be a schema documentation request
+        if bundle.request.method == "GET" and not hasattr(bundle.obj, "video"): #This would be a schema documentation request
             return True
         current_video = bundle.obj.video
         if (not current_user.is_superuser):
