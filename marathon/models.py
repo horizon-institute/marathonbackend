@@ -22,8 +22,14 @@ class GUIDModel(models.Model):
 class Event(models.Model):
     date = models.DateField(db_index=True)
     public = models.BooleanField(db_index=True, default=False)
+    is_current = models.BooleanField(db_index=True, default=False)
     name = models.CharField(max_length=200, db_index=True)
     
+    def save(self, *args, **kwargs):
+        if self.is_current:
+            Event.objects.filter(is_current=True).exclude(id=self.id).update(is_current=False)
+        super(Event, self).save(*args, **kwargs)
+        
     def __unicode__(self):
         return self.name
 
@@ -38,7 +44,10 @@ class Spectator(GUIDModel):
     
     @property
     def last_position(self):
-        return self.positionupdates.latest("time")
+        try:
+            return self.positionupdates.latest("time")
+        except:
+            return None
 
 class PositionUpdate(GUIDModel):
     spectator = models.ForeignKey(Spectator, related_name="positionupdates", db_index=True, null=False, blank=False)
@@ -51,7 +60,7 @@ class Video(GUIDModel):
     event = models.ForeignKey(Event, related_name="videos", db_index=True, null=False, blank=False)
     spectator = models.ForeignKey(Spectator, related_name="videos", db_index=True, null=False, blank=False)
     start_time = models.DateTimeField(db_index=True, null=False, blank=False, default=datetime.datetime.now)
-    duration = models.IntegerField(db_index=True, null=False, blank=False)
+    duration = models.IntegerField(db_index=True, null=False, blank=False, default=0)
     url = models.CharField(max_length=300)
     online = models.BooleanField(db_index=True, default=False)
     public = models.BooleanField(db_index=True, default=False)
@@ -70,6 +79,7 @@ class RunnerTag(GUIDModel):
     latitude = models.FloatField(null=False, blank=False, db_index=True)
     longitude = models.FloatField(null=False, blank=False, db_index=True)
     accuracy = models.FloatField(null=False, blank=False, db_index=True)
+    public = models.BooleanField(db_index=True, default=False)
     
     @property
     def video_time(self):

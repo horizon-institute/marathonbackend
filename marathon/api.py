@@ -1,8 +1,9 @@
 from tastypie import resources, fields
-from tastypie.authentication import MultiAuthentication, SessionAuthentication
+from tastypie.authentication import MultiAuthentication, SessionAuthentication, ApiKeyAuthentication
 from tastypie.authorization import Authorization, DjangoAuthorization
 from oauth2_tastypie.authentication import OAuth20Authentication
-from marathon.models import Spectator, Video, RunnerTag, PositionUpdate
+from django.contrib.auth.models import User
+from marathon.models import Spectator, Video, RunnerTag, PositionUpdate, Event
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.conf.urls import url
 from django.db.models import Count, Q
@@ -19,9 +20,18 @@ class SpectatorAuthorization(Authorization):
         if bundle.request.method == "GET" and bundle.obj.user is None:
             return True
         return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
+    
+    def create_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
+    
+    def update_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
+    
+    def delete_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
 
 class SpectatorResource(resources.ModelResource):
-    last_position = fields.ToOneField('marathon.api.PositionUpdateResource', 'last_position', related_name='last_position', null=True, full=True)
+    last_position = fields.ToOneField('marathon.api.PositionUpdateResource', 'last_position', related_name='last_position', null=True, full=True, readonly=True)
 
     def prepend_urls(self):
         return [
@@ -48,16 +58,17 @@ class SpectatorResource(resources.ModelResource):
         nested_resource = VideoResource()
         return nested_resource.get_list(request)
     
-#     def dehydrate(self, bundle):
-#         bundle.data["last_position"] = bundle.obj.positionupdates.order_by("-time")[0] if bundle.obj.positionupdates.count() else None
-#         return bundle
+    def hydrate(self, bundle):
+        if "user" not in bundle.data:
+            bundle.obj.user_id = bundle.data.get("user_id", bundle.request.user.id)
+        return bundle
     
     class Meta:
         queryset = Spectator.objects.all()
         resource_name = 'spectator'
         fields = ['id', 'guid', 'name']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication())
+        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
         authorization = SpectatorAuthorization()
         filtering = {
              "id": ("exact",),
@@ -81,6 +92,15 @@ class VideoAuthorization(Authorization):
         if current_user.is_superuser:
             return True
         return ((current_video.spectator.user == current_user) or (current_video.public and current_video.event.public))
+    
+    def create_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
+    
+    def update_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
+    
+    def delete_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
 
 class VideoResource(resources.ModelResource):
     spectator = fields.ToOneField(SpectatorResource, 'spectator')
@@ -88,7 +108,6 @@ class VideoResource(resources.ModelResource):
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
     event_name = fields.CharField(attribute='event__name', readonly=True)
     end_time = fields.DateTimeField(attribute='end_time', readonly=True)
-    tag_count = fields.IntegerField(attribute='runnertag_count', readonly=True)
     
     def prepend_urls(self):
         return [
@@ -113,12 +132,27 @@ class VideoResource(resources.ModelResource):
         nested_resource = SpectatorResource()
         return nested_resource.get_detail(request, pk=obj.spectator_id)
     
+    def hydrate(self, bundle):
+        if "spectator" not in bundle.data:
+            if "spectator_id" in bundle.data:
+                bundle.obj.spectator_id = bundle.data["spectator_id"]
+            elif "spectator_guid" in bundle.data:
+                bundle.obj.spectator = Spectator.objects.get(guid=bundle.data["spectator_guid"])
+            else:
+                bundle.obj.spectator, created = Spectator.objects.get_or_create(user=bundle.request.user, defaults={"name":"Participant %d"%bundle.request.user.id})
+        if "event" not in bundle.data:
+            if "event_id" in bundle.data:
+                bundle.obj.event_id = bundle.data["event_id"]
+            else:
+                bundle.obj.event = Event.objects.get(is_current=True)
+        return bundle
+    
     class Meta:
-        queryset = Video.objects.select_related('spectator','event').annotate(runnertag_count=Count('runnertags'))
+        queryset = Video.objects.select_related('spectator','event')
         resource_name = 'video'
-        fields = ['id', 'guid', 'start_time', 'duration']
+        fields = ['id', 'guid', 'start_time', 'duration', 'public']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication())
+        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
         authorization = VideoAuthorization()
         filtering = {
              "id": ("exact",),
@@ -128,19 +162,53 @@ class VideoResource(resources.ModelResource):
              "event": ALL_WITH_RELATIONS,
              "spectator": ALL_WITH_RELATIONS,
         }
+        
+class PositionUpdateAuthorization(Authorization):
+    
+    def read_list(self, object_list, bundle):
+        current_user = bundle.request.user
+        if current_user.is_superuser:
+            return object_list
+        return object_list.filter(spectator__user_id=current_user.id)
 
+    def read_detail(self, object_list, bundle):
+        if bundle.request.method == "GET" and not hasattr(bundle.obj, "spectator"): #This would be a schema documentation request
+            return True
+        if bundle.request.user.is_superuser:
+            return True
+        return (bundle.obj.spectator.user == bundle.request.user)
+    
+    def create_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
+    
+    def update_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
+    
+    def delete_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
+    
 class PositionUpdateResource(resources.ModelResource):
     spectator = fields.ToOneField(SpectatorResource, 'spectator')
     spectator_guid = fields.CharField(attribute='spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
+    
+    def hydrate(self, bundle):
+        if "spectator" not in bundle.data:
+            if "spectator_id" in bundle.data:
+                bundle.obj.spectator_id = bundle.data["spectator_id"]
+            elif "spectator_guid" in bundle.data:
+                bundle.obj.spectator = Spectator.objects.get(guid=bundle.data["spectator_guid"])
+            else:
+                bundle.obj.spectator,created = Spectator.objects.get_or_create(user=bundle.request.user, defaults={"name":"Participant %d"%bundle.request.user.id})
+        return bundle
     
     class Meta:
         queryset = PositionUpdate.objects.select_related('spectator')
         resource_name = 'positionupdate'
         fields = ['id', 'guid', 'time', 'latitude', 'longitude', 'accuracy']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication())
-        authorization = DjangoAuthorization()
+        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authorization = PositionUpdateAuthorization()
         filtering = {
              "id": ("exact",),
              "latitude": ALL,
@@ -157,7 +225,7 @@ class RunnerTagAuthorization(Authorization):
         current_user = bundle.request.user
         if current_user.is_superuser:
             return object_list
-        return object_list.filter(Q(video__spectator__user_id=current_user.id) | (Q(video__public=True) & Q(video__event__public=True)))
+        return object_list.filter(Q(video__spectator__user_id=current_user.id) | (Q(public=True) & Q(video__public=True) & Q(video__event__public=True)))
 
     def read_detail(self, object_list, bundle):
         current_user = bundle.request.user
@@ -165,8 +233,17 @@ class RunnerTagAuthorization(Authorization):
             return True
         current_video = bundle.obj.video
         if (not current_user.is_superuser):
-            return ((current_video.spectator.user == current_user) or (current_video.public and current_video.event.public))
+            return ((current_video.spectator.user == current_user) or (bundle.obj.public and current_video.public and current_video.event.public))
         return True
+
+    def create_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.video.spectator.user == bundle.request.user)
+    
+    def update_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.video.spectator.user == bundle.request.user)
+    
+    def delete_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser) or (bundle.obj.video.spectator.user == bundle.request.user)
 
 class RunnerTagResource(resources.ModelResource):
     video = fields.ToOneField(VideoResource, 'video')
@@ -197,13 +274,21 @@ class RunnerTagResource(resources.ModelResource):
         obj = self.cached_obj_get(bundle=bundle, **self.remove_api_resource_names(kwargs))
         nested_resource = SpectatorResource()
         return nested_resource.get_detail(request, pk=obj.video.spectator_id)
-        
+    
+    def hydrate(self, bundle):
+        if "video" not in bundle.data:
+            if "video_id" in bundle.data:
+                bundle.obj.video_id = bundle.data["video_id"]
+            if "video_guid" in bundle.data:
+                bundle.obj.video = Video.objects.get(guid=bundle.data["video_guid"])
+        return bundle
+    
     class Meta:
         queryset = RunnerTag.objects.select_related('video','video__spectator','video__event')
         resource_name = 'runnertag'
-        fields = ['id', 'guid', 'runner_number', 'latitude', 'longitude', 'accuracy', 'time', 'video_id']
+        fields = ['id', 'guid', 'runner_number', 'latitude', 'longitude', 'accuracy', 'time', 'video_id', 'public']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication())
+        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
         authorization = RunnerTagAuthorization()
         filtering = {
              "id": ("exact",),
