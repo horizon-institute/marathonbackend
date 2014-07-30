@@ -1,12 +1,11 @@
 from tastypie import resources, fields
 from tastypie.authentication import MultiAuthentication, SessionAuthentication, ApiKeyAuthentication
-from tastypie.authorization import Authorization, DjangoAuthorization
+from tastypie.authorization import Authorization
 from oauth2_tastypie.authentication import OAuth20Authentication
-from django.contrib.auth.models import User
 from marathon.models import Spectator, Video, RunnerTag, PositionUpdate, Event
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.conf.urls import url
-from django.db.models import Count, Q
+from django.db.models import Q
 
 class SpectatorAuthorization(Authorization):
     
@@ -76,6 +75,32 @@ class SpectatorResource(resources.ModelResource):
              "guid": ("exact",),
         }
 
+class EventAuthorization(Authorization):
+    
+    def read_list(self, object_list, bundle):
+        if bundle.request.user.is_superuser:
+            return object_list
+        return object_list.filter(public=True)
+
+    def read_detail(self, object_list, bundle):
+        return (bundle.request.user.is_superuser or bundle.obj.public)
+
+class EventResource(resources.ModelResource):
+    class Meta:
+        queryset = Event.objects.all()
+        resource_name = 'event'
+        fields = ['id', 'name', 'date', 'public', 'is_current']
+        allowed_methods = ['get']
+        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authorization = EventAuthorization()
+        filtering = {
+             "id": ("exact",),
+             "name": ALL,
+             "date": ALL,
+             "public": ("exact",),
+             "is_current": ("exact",),
+        }
+
 class VideoAuthorization(Authorization):
     
     def read_list(self, object_list, bundle):
@@ -107,6 +132,7 @@ class VideoResource(resources.ModelResource):
     spectator_guid = fields.CharField(attribute='spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
     event_name = fields.CharField(attribute='event__name', readonly=True)
+    event_id = fields.CharField(attribute='event__name', readonly=True)
     end_time = fields.DateTimeField(attribute='end_time', readonly=True)
     
     def prepend_urls(self):
