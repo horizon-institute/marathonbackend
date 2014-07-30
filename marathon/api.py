@@ -132,7 +132,7 @@ class VideoResource(resources.ModelResource):
     spectator_guid = fields.CharField(attribute='spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
     event_name = fields.CharField(attribute='event__name', readonly=True)
-    event_id = fields.CharField(attribute='event__name', readonly=True)
+    event_id = fields.CharField(attribute='event_id', readonly=True)
     end_time = fields.DateTimeField(attribute='end_time', readonly=True)
     
     def prepend_urls(self):

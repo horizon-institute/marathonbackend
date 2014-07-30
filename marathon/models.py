@@ -70,7 +70,7 @@ class Video(GUIDModel):
         return self.start_time + datetime.timedelta(0, self.duration)
     
     def __unicode__(self):
-        return "Video by %s at %s"%(self.spectator.guid, self.start_time.time())
+        return "Video by %s at %s"%(self.spectator.name, self.start_time.time())
 
 class RunnerTag(GUIDModel):
     video = models.ForeignKey(Video, related_name="runnertags", db_index=True, null=False, blank=False)
