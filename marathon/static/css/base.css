@@ -11,6 +11,34 @@ h1 {
     font-size: 20px; font-weight: bold; color: #ffffff;
 }
 
+h2 {
+    font-size: 16px; font-weight: bold; margin: 10px 0 5px;
+}
+
+#login-form {
+    display: none;
+}
+
+form li {
+    margin: .5em 0;
+}
+
+label {
+    display: inline-block; min-width: 120px;
+}
+
+.helptext {
+    display: block; font-size: .8em;
+}
+
+.errorlist {
+    font-weight: bold; color: #800000; font-size: .8em;
+}
+
+sup {
+    font-size: .6em; vertical-align: super;
+}
+
 #main-contents {
     margin: 0 auto; max-width: 1080px; padding: 10px;
 }
