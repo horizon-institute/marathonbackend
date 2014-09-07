@@ -55,6 +55,9 @@ class PositionUpdate(GUIDModel):
     latitude = models.FloatField(null=False, blank=False, db_index=True)
     longitude = models.FloatField(null=False, blank=False, db_index=True)
     accuracy = models.FloatField(null=False, blank=False, db_index=True)
+    
+    def __unicode__(self):
+        return "%s at %s"%(self.spectator.name, self.time)
 
 class Video(GUIDModel):
     event = models.ForeignKey(Event, related_name="videos", db_index=True, null=False, blank=False)
@@ -70,7 +73,7 @@ class Video(GUIDModel):
         return self.start_time + datetime.timedelta(0, self.duration)
     
     def __unicode__(self):
-        return "Video by %s at %s"%(self.spectator.name, self.start_time.time())
+        return "Video by %s at %s"%(self.spectator.name, self.start_time)
 
 class RunnerTag(GUIDModel):
     video = models.ForeignKey(Video, related_name="runnertags", db_index=True, null=False, blank=False)
@@ -86,6 +89,6 @@ class RunnerTag(GUIDModel):
         return (self.time - self.video.start_time).seconds
     
     def __unicode__(self):
-        return "Runner #%d tagged at %s"%(self.runner_number, self.time.time())
+        return "Runner #%d tagged by %s at %s"%(self.runner_number, self.video.spectator.name, self.time)
 
     

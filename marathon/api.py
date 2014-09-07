@@ -174,7 +174,7 @@ class VideoResource(resources.ModelResource):
         return bundle
     
     class Meta:
-        queryset = Video.objects.select_related('spectator','event')
+        queryset = Video.objects.select_related('spectator','event').order_by("-start_time")
         resource_name = 'video'
         fields = ['id', 'guid', 'start_time', 'duration', 'public']
         allowed_methods = ['get', 'put', 'post', 'delete']
@@ -188,6 +188,7 @@ class VideoResource(resources.ModelResource):
              "event": ALL_WITH_RELATIONS,
              "spectator": ALL_WITH_RELATIONS,
         }
+        ordering = ["start_time"]
         
 class PositionUpdateAuthorization(Authorization):
     
@@ -229,7 +230,7 @@ class PositionUpdateResource(resources.ModelResource):
         return bundle
     
     class Meta:
-        queryset = PositionUpdate.objects.select_related('spectator')
+        queryset = PositionUpdate.objects.select_related('spectator').order_by("-time")
         resource_name = 'positionupdate'
         fields = ['id', 'guid', 'time', 'latitude', 'longitude', 'accuracy']
         allowed_methods = ['get', 'put', 'post', 'delete']
@@ -244,6 +245,7 @@ class PositionUpdateResource(resources.ModelResource):
              "guid": ("exact",),
              "spectator": ALL_WITH_RELATIONS,
         }
+        ordering = ["time"]
 
 class RunnerTagAuthorization(Authorization):
     
@@ -310,7 +312,7 @@ class RunnerTagResource(resources.ModelResource):
         return bundle
     
     class Meta:
-        queryset = RunnerTag.objects.select_related('video','video__spectator','video__event')
+        queryset = RunnerTag.objects.select_related('video','video__spectator','video__event').order_by("-time")
         resource_name = 'runnertag'
         fields = ['id', 'guid', 'runner_number', 'latitude', 'longitude', 'accuracy', 'time', 'video_id', 'public']
         allowed_methods = ['get', 'put', 'post', 'delete']
@@ -326,3 +328,4 @@ class RunnerTagResource(resources.ModelResource):
              "guid": ("exact",),
              "video": ALL_WITH_RELATIONS,
         }
+        ordering = ["time", "runner_number"]
