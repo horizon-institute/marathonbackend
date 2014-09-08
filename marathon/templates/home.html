@@ -2,5 +2,14 @@
 
 {% block content %}
 <p>You are connected as <b style="font-weight: bold;">{{user.username}}</b></p>
+{% if videos or runnertags or hottags %}
+<p>Congratulations{% if user.first_name %} {{user.first_name}}{% endif %},
+    you have uploaded {{videos}} video{% if videos > 1 %}s{% endif %}
+    and produced {{runnertags}} tag{% if runnertags > 1 %}s{% endif %}
+    of runners and {{hottags}} hot tag{% if hottags > 1 %}s{% endif %}!</p>
+{%else%}
+<p>Hello{% if user.first_name %} {{user.first_name}}{% endif %}, it looks like you haven't uploaded any videos yet!</p>
+{% endif %}
+<p>Download our app from Google Play</p>
 <p><a href="{% url 'django.contrib.auth.views.logout'%}?next=/">Log out</a></p>
 {% endblock %}

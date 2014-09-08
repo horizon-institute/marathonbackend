@@ -5,7 +5,7 @@ from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from marathon.api import SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource
-from marathon.views import register
+from marathon.views import register, home
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'marathonbackend.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', login_required(TemplateView.as_view(template_name='home.html')), name='home'),
+    url(r'^$', login_required(home), name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include(auth_urls)),
     url(r'^signup/', register, name='signup'),
