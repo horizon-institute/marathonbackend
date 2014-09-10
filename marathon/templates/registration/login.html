@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}{{block.super}}: Sign in{% endblock %}
+
 {% block header_declarations %}
 <script type="text/javascript">
     $(function() {
@@ -22,12 +24,12 @@
         <li><a rel="nofollow" href="{% url "socialauth_begin" "facebook" %}">Facebook</a></li>
         <li><a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}">Google</a></li>
     </ul>
-<h2><a href="#login-form">Connect with a Marathon-Live login</a></h2>
+<h2><a href="#login-form">Connect with a RunSpotRun login</a></h2>
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}" id="login-form">
 {% csrf_token %}
 {{ form.as_ul }}
 <input type="submit" value="login" />
 <input type="hidden" name="next" value="{{ next }}" />
-<p><a href="{% url 'signup' %}">Create your Marathon-Live account</a></p>
+<p><a href="{% url 'signup' %}">Create your RunSpotRun account</a></p>
 </form>
 {% endblock %}
