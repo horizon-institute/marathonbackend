@@ -7,12 +7,28 @@ header {
     padding: 5px; box-shadow: 0 2px 4px #000080;
 }
 
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
 h1 {
     font-size: 20px; font-weight: bold; color: #ffffff;
 }
 
+h1 em {
+    font-style: normal; font-weight: normal;
+}
+
 h2 {
     font-size: 16px; font-weight: bold; margin: 10px 0 5px;
+}
+
+p {
+    margin: 0.4em 0;
 }
 
 #login-form {

@@ -6,6 +6,7 @@ from marathon.models import Spectator, Video, RunnerTag, PositionUpdate, Event
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.conf.urls import url
 from django.db.models import Q
+import datetime
 
 class SpectatorAuthorization(Authorization):
     
@@ -329,3 +330,71 @@ class RunnerTagResource(resources.ModelResource):
              "video": ALL_WITH_RELATIONS,
         }
         ordering = ["time", "runner_number"]
+
+
+class ActivityWrapper(object):
+       
+    def __init__(self, item=None):
+        
+        if item:
+            self.type = item.__class__.__name__
+            spectator = getattr(getattr(item,"video",item),"spectator",None)
+            self.spectator_id = getattr(spectator,"id",None)
+            self.spectator_name = getattr(spectator,"name",None)
+            self.time = getattr(item,"start_time",getattr(item,"time",None))
+            for a in ["latitude","longitude","accuracy","runner_number","guid"]:
+                setattr(self,a,getattr(item,a,None))
+
+
+class Activity(resources.Resource):
+    
+    guid = fields.CharField(attribute='guid', null=True)
+    spectator_name = fields.CharField(attribute='spectator_name', null=True)
+    spectator_id = fields.IntegerField(attribute='spectator_id', null=True)
+    latitude = fields.FloatField(attribute='latitude', null=True)
+    longitude = fields.FloatField(attribute='longitude', null=True)
+    accuracy = fields.FloatField(attribute='accuracy', null=True)
+    runner_number = fields.IntegerField(attribute='runner_number', null=True)
+    type = fields.CharField(attribute='type')
+    time = fields.DateTimeField(attribute='time')
+    
+    class Meta:
+        resource_name = 'activity'
+        allowed_methods = ['get']
+        object_class = ActivityWrapper
+    
+    def obj_get_list(self, bundle, **kwargs):
+        print "Calling obj_get_list", bundle.request.GET, kwargs
+        
+        timespan = bundle.request.GET.get("timespan", False)
+        
+        puqs = PositionUpdate.objects.all()
+        vqs = Video.objects.all()
+        rtqs = RunnerTag.objects.all()
+        
+        if timespan:
+            earliest_date = datetime.datetime.now() - datetime.timedelta(0,timespan)
+            puqs = puqs.filter(time__gte=earliest_date)
+            rtqs = rtqs.filter(time__gte=earliest_date)
+            vqs = vqs.filter(start_time__gte=earliest_date)
+        
+        if bundle.request.user.is_superuser:
+        
+            spectator_id = bundle.request.GET.get("spectator", None)
+            
+            if spectator_id:
+                puqs = puqs.filter(spectator_id=spectator_id)
+                rtqs = rtqs.filter(video__spectator_id=spectator_id)
+                vqs = vqs.filter(spectator_id=spectator_id)
+        
+        else:
+            puqs = puqs.filter(spectator__user=bundle.request.user)
+            rtqs = rtqs.filter(video__spectator__user=bundle.request.user)
+            vqs = vqs.filter(spectator__user=bundle.request.user)
+        
+        activitylist = [ActivityWrapper(pu) for pu in puqs] + [ActivityWrapper(rt) for rt in rtqs] + [ActivityWrapper(v) for v in vqs]
+        
+        activitylist.sort(key=lambda a: a.time, reverse=True)
+        
+        return activitylist
+    

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>You are connected as <b style="font-weight: bold;">{{user.username}}</b></p>
+<p>You are connected as <strong>{{user.username}}</strong></p>
 {% if videos or runnertags or hottags %}
 <p>Congratulations{% if user.first_name %} {{user.first_name}}{% endif %},
     you have uploaded {{videos}} video{% if videos > 1 %}s{% endif %}
