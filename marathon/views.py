@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from marathon.forms import UserForm
+from marathon.forms import UserForm, ContactRegistrationForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from marathon.models import  Video, RunnerTag
@@ -22,6 +22,21 @@ def register(request):
         'form': form,
     })
 
+def landing(request):
+    if request.method == 'POST':
+        form = ContactRegistrationForm(request.POST)
+        showform = False
+        if form.is_valid():
+            form.save()
+    else:
+        showform = True
+        form = ContactRegistrationForm()
+    return render(request, "landing.html", {
+        'showform': showform,
+        'email': request.POST["email"] if request.method == 'POST' else None,
+        'form': form,
+    })
+    
 def home(request):
     rtqs = RunnerTag.objects.filter(video__spectator__user=request.user)
     return render(request, "home.html", {

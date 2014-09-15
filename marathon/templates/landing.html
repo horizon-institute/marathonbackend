@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>This is the about text</p>
+{% if email %}
+<p>Thanks, we'll send you an email at <strong>{{email}}</strong> when RunSpotRun is online!</p>
+{% endif %}
+{% if showform %}
+<p>Do you wish to know more about RunSpotRun? Please leave us your email so we can stay in touch!</p>
+<form action="" method="post">
+{{ form.as_ul }}
+{% csrf_token %}
+    <input type="submit" value="Let's keep in touch">
+</form>
+{% endif %}
+{% endblock %}

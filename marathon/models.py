@@ -91,4 +91,9 @@ class RunnerTag(GUIDModel):
     def __unicode__(self):
         return "Runner #%d tagged by %s at %s"%(self.runner_number, self.video.spectator.name, self.time)
 
+class ContactRegistration(models.Model):
+    email = models.EmailField(null=False, blank=False)
+    registration_date = models.DateTimeField(default=datetime.datetime.now)
     
+    def __unicode__(self):
+        return self.email
