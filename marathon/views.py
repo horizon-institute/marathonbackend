@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from marathon.forms import UserForm, ContactRegistrationForm
+from marathon.forms import UserForm, ContactRegistrationForm, RunnerSearchForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from marathon.models import  Video, RunnerTag
+from django.views.generic import ListView
 
 def register(request):
     if request.method == 'POST':
@@ -23,13 +24,13 @@ def register(request):
     })
 
 def landing(request):
+    showform = True
     if request.method == 'POST':
         form = ContactRegistrationForm(request.POST)
-        showform = False
         if form.is_valid():
+            showform = False
             form.save()
     else:
-        showform = True
         form = ContactRegistrationForm()
     return render(request, "landing.html", {
         'showform': showform,
@@ -45,4 +46,17 @@ def home(request):
         "videos": Video.objects.filter(spectator__user=request.user).count(),
     })
 
+class RunnerTagList(ListView):
+    template_name = "searchrunner.html"
+    model = RunnerTag
+    
+    def get_queryset(self):
+        self.form = RunnerSearchForm(self.request.GET, self.request.user)
+        if self.form.is_valid():
+            return RunnerTag.objects.select_related("video").filter(video__event=self.form.cleaned_data["event"],runner_number=self.form.cleaned_data["runner_number"]).order_by("time")
+    
+    def get_context_data(self, **kwargs):
+        context = super(RunnerTagList, self).get_context_data(**kwargs)
+        context["form"] = self.form
+        return context
     

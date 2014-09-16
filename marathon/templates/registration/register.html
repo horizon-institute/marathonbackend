@@ -1,24 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}{{block.super}}: Create new user profile{% endblock %}
+{% block title %}{{block.super}}: Create an account{% endblock %}
+{% block page_title %}<span class="page-title">Create an account</span>{% endblock %}
 
 {% block content %}
 
 <h2>Create an account</h2>
 
 <form action="" method="post">
-{{ form.as_ul }}
+    <ul class="fieldcontainer">
+        {{ form.as_ul }}
+    </ul>
+
 {% csrf_token %}
-    <input type="submit" value="Create the account">
+    <div class="button-container">
+        <input type="submit" value="Create the account" class="button">
+    </div>
+    
 </form>
 
 
-<h2>You may also register using a 3<sup>rd</sup>-party provider</h2>
-    <ul>
-        <li><a rel="nofollow" href="{% url "socialauth_begin" "twitter" %}">Twitter</a></li>
-        <li><a rel="nofollow" href="{% url "socialauth_begin" "facebook" %}">Facebook</a></li>
-        <li><a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}">Google</a></li>
-    </ul>
-<h2>
+<p>
+    <a href="{% url 'django.contrib.auth.views.login' %}">Return to the login page to create an account through a 3<sup>rd</sup>-party provider</a>
+</p>
 
 {% endblock %}

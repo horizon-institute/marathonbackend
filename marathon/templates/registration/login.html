@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block title %}{{block.super}}: Sign in{% endblock %}
+{% block page_title %}<span class="page-title">Sign in</span>{% endblock %}
 
 {% block header_declarations %}
 <script type="text/javascript">
     $(function() {
-        $("a[href^=#]").click(function() {
-            $($(this).attr("href")).slideToggle();
+        $(".rsr-login,.back-button").click(function() {
+            $("#signin-providers,#login-form").slideToggle();
         });
     });
 </script>
@@ -14,22 +15,42 @@
 
 {% block content %}
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+<ul id="signin-providers" {% if form.errors %}style="display: none;"{% endif %}>
+    <li class="button-container">
+        <a rel="nofollow" href="{% url "socialauth_begin" "facebook" %}" class="button fb-login">Sign in with Facebook</a>
+    </li>
+    <li class="button-container">
+        <a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}" class="button google-login">Sign in with Google</a>
+    </li>
+    <li class="button-container">
+        <a rel="nofollow" href="{% url "socialauth_begin" "twitter" %}" class="button twitter-login">Sign in with Twitter</a>
+    </li>
+    <li class="button-container">
+        <a href="#login-form" class="button rsr-login">Sign in with <span class="rsr-type">Run<em>Spot</em>Run</span></a>
+    </li>
+</ul>
 
-<h2>Connect with 3<sup>rd</sup>-party providers</h2>
-    <ul>
-        <li><a rel="nofollow" href="{% url "socialauth_begin" "twitter" %}">Twitter</a></li>
-        <li><a rel="nofollow" href="{% url "socialauth_begin" "facebook" %}">Facebook</a></li>
-        <li><a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}">Google</a></li>
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}" id="login-form" {% if form.errors %}style="display: block;"{% endif %}>
+    <div>
+        <a href="#signin-providers" class="back-button">&laquo;</a>
+    </div>
+    
+    {% csrf_token %}
+
+    <ul class="fieldcontainer">
+        {{ form.as_ul }}
     </ul>
-<h2><a href="#login-form">Connect with a RunSpotRun login</a></h2>
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}" id="login-form">
-{% csrf_token %}
-{{ form.as_ul }}
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
-<p><a href="{% url 'signup' %}">Create your RunSpotRun account</a></p>
+    
+    <div class="button-container">
+        <input class="button" type="submit" value="login" />
+    </div>
+
+    <input type="hidden" name="next" value="{{ next }}" />
+
+    <h2>Not a user yet?</h2>
+    <div class="button-container">
+        <a class="button" href="{% url 'signup' %}">Create your <span class="rsr-type">Run<em>Spot</em>Run</span> account</a>
+    </div>
+
 </form>
 {% endblock %}

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from marathon.api import Activity, SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource
-from marathon.views import register, home, landing
+from marathon.views import register, home, landing, RunnerTagList
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^$', landing, name='landing'),
+    url(r'^search-runner/', RunnerTagList.as_view(), name='searchrunner'),
     url(r'^home/', login_required(home), name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include(auth_urls)),

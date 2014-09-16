@@ -1,16 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>This is the about text</p>
-{% if email %}
-<p>Thanks, we'll send you an email at <strong>{{email}}</strong> when RunSpotRun is online!</p>
+
+{% if form.is_valid %}
+<h3>Thanks, we'll send you an email at <strong>{{email}}</strong> when RunSpotRun is online!</h3>
 {% endif %}
 {% if showform %}
-<p>Do you wish to know more about RunSpotRun? Please leave us your email so we can stay in touch!</p>
-<form action="" method="post">
-{{ form.as_ul }}
+<form action="" method="post" id="landing-form">
+    {% if form.email.errors %}
+        {{ form.email.errors }}
+    {% endif %}
+    <div class="landing-half">
+        {{ form.email }}
+    </div>
+    <div class="landing-half">
+        <input type="submit" class="button" value="Register to find out more">
+    </div>
+    </table>
 {% csrf_token %}
-    <input type="submit" value="Let's keep in touch">
+    
 </form>
 {% endif %}
+<div class="landing-main">
+    
+    <div class="landing-about-block landing-runners">
+        <div class="landing-contents">
+            <h2>Runners</h2>
+            <h3>Support</h3>
+            <p>Get your supporters to capture your race from start to finish.</p>
+            <h3>Find</h3>
+            <p>Find videos of you and other runners you know.</p>
+            <h3>Re-live</h3>
+            <p>Re-live your own race from everybody's uploaded videos.</p>
+        </div>
+        <div class="landing-credits">Photo Creative Commons CC-BY US Army</div>
+    </div>
+    
+    <div class="landing-about-block landing-supporters">
+        <div class="landing-contents">
+            <h2>Supporters</h2>
+            <h3>Capture</h3>
+            <p>Download the app to take footage of your favourite runners.</p>
+            <h3>Tag</h3>
+            <p>Tag the runners you see with their race number.</p>
+            <h3>Share</h3>
+            <p>Upload your videos for runners and supporters to enjoy!</p>
+        </div>
+        <div class="landing-credits">Photo Creative Commons CC-BY-SA Aurelien Guichard</div>
+    </div>
+
+</div>
+
 {% endblock %}
