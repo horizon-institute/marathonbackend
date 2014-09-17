@@ -237,7 +237,7 @@ sup {
 }
 
 #content-wrapper {
-    margin: 0 auto; max-width: 960px; padding: 10px 10px 40px;
+    margin: 0 auto; max-width: 960px; padding: 10px 10px;
 }
 
 @media (max-width: 500px) {
@@ -300,3 +300,6 @@ footer p {
     width: 225px; height: 170px;
 }
 
+#post-contents {
+    width: 20%; height: 1px; padding: 20px 0; border-bottom: 1px solid #505050; margin: 0 auto; clear: both;
+}
