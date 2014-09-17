@@ -25,7 +25,7 @@
 </h3>
 {% if paginator.count %}
 {% include "partials/pagination.html" %}
-<img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}">
+<img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}&key={{GMAPS_API_KEY}}">
 </div>
 </div>
 {% endif %}

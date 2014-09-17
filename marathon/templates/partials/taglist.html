@@ -23,7 +23,7 @@
                 Tag at {{runnertag.video_time}}s in the video
             </li>
             <li>
-                <img src="http://maps.googleapis.com/maps/api/staticmap?size=225x80&zoom=14&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}"></td>
+                <img src="http://maps.googleapis.com/maps/api/staticmap?size=225x80&zoom=14&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}&key={{GMAPS_API_KEY}}"></td>
             </li>
         </ul>
     </li>

@@ -6,6 +6,7 @@ from django.db.models import Count
 from marathon.models import  Video, RunnerTag
 from django.views.generic import ListView
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 def register(request):
     if request.method == 'POST':
@@ -75,6 +76,7 @@ class RunnerTagList(ListView):
     def get_context_data(self, **kwargs):
         context = super(RunnerTagList, self).get_context_data(**kwargs)
         context["form"] = self.form
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
 class MyVideoList(ListView):
@@ -116,4 +118,5 @@ class MyTagList(ListView):
         context["runnertag_count"] = self.runnertag_count
         context["hottag_count"] = self.hottag_count
         context["total_count"] = self.total_count
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
