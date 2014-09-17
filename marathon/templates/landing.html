@@ -10,21 +10,19 @@
     {% if form.email.errors %}
         {{ form.email.errors }}
     {% endif %}
-    <div class="landing-half">
+    <div class="content-block-wrapper">
         {{ form.email }}
     </div>
-    <div class="landing-half">
-        <input type="submit" class="button" value="Register to find out more">
+    <div class="content-block-wrapper">
+        <input id="landing-submit" type="submit" class="button" value="Register to find out more">
     </div>
-    </table>
 {% csrf_token %}
     
 </form>
 {% endif %}
-<div class="landing-main">
-    
-    <div class="landing-about-block landing-runners">
-        <div class="landing-contents">
+    <div class="fullwidth-float">
+    <div class="content-block-wrapper">
+        <div class="landing-about-block landing-runners">
             <h2>Runners</h2>
             <h3>Support</h3>
             <p>Get your supporters to capture your race from start to finish.</p>
@@ -32,12 +30,12 @@
             <p>Find videos of you and other runners you know.</p>
             <h3>Re-live</h3>
             <p>Re-live your own race from everybody's uploaded videos.</p>
+            <div class="landing-credits">Photo Creative Commons CC-BY US Army</div>
         </div>
-        <div class="landing-credits">Photo Creative Commons CC-BY US Army</div>
     </div>
     
-    <div class="landing-about-block landing-supporters">
-        <div class="landing-contents">
+    <div class="content-block-wrapper">
+        <div class="landing-about-block landing-supporters">
             <h2>Supporters</h2>
             <h3>Capture</h3>
             <p>Download the app to take footage of your favourite runners.</p>
@@ -45,10 +43,9 @@
             <p>Tag the runners you see with their race number.</p>
             <h3>Share</h3>
             <p>Upload your videos for runners and supporters to enjoy!</p>
+            <div class="landing-credits">Photo Creative Commons CC-BY-SA Aurelien Guichard</div>
         </div>
-        <div class="landing-credits">Photo Creative Commons CC-BY-SA Aurelien Guichard</div>
     </div>
-
-</div>
+    </div>
 
 {% endblock %}

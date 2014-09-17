@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{block.super}}: My {{tagtype}} tags{% endblock %}
+{% block page_title %}<span class="page-title">My {{tagtype}} tags</span>{% endblock %}
+
+{% block content %}
+
+<div class="content-block-wrapper">
+<div class="content-block">
+<h3>You have produced
+    {% if paginator.count %}
+        <strong>{{paginator.count}}</strong>
+        {{tagtype}} tag{% if paginator.count > 1 %}s{% endif %}
+    {% else %}
+        <strong>no {{tagtype}} tag yet</strong>
+    {% endif %}
+</h3>
+{% if tagtype %}
+<p>out of <a href="{% url "my_tag_list" %}">a total of {{total_count}} tag(s)</a></p>
+{% if tagtype == "hot" %}
+<p><a href="{% url "my_tag_list" tagtype="runner" %}">Click here to list your {{runnertag_count}} runner tag(s)</a></p>
+{% endif %}
+{% if tagtype == "runner" %}
+<p><a href="{% url "my_tag_list" tagtype="hot" %}">Click here to list your {{hottag_count}} hot tag(s)</a></p>
+{% endif %}
+{% else %}
+<p>including <a href="{% url "my_tag_list" tagtype="hot" %}">{{hottag_count}} hot tag(s)</a> and <a href="{% url "my_tag_list" tagtype="runner" %}">{{runnertag_count}} runner tag(s)</a></p>
+{% endif %}
+
+{% include "partials/pagination.html" %}
+
+</div>
+</div>
+
+{% if paginator.count %}
+
+<div class="content-block-wrapper">
+<div class="content-block">
+<img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}">
+</div>
+</div>
+{% endif %}
+
+{% include "partials/taglist.html" %}
+
+{% endblock %}

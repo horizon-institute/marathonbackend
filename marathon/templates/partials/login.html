@@ -1,0 +1,14 @@
+<ul id="signin-providers">
+    <li class="button-container">
+        <a rel="nofollow" href="{% url "socialauth_begin" "facebook" %}" class="button fb-login">Sign in with Facebook</a>
+    </li>
+    <li class="button-container">
+        <a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}" class="button google-login">Sign in with Google</a>
+    </li>
+    <li class="button-container">
+        <a rel="nofollow" href="{% url "socialauth_begin" "twitter" %}" class="button twitter-login">Sign in with Twitter</a>
+    </li>
+    <li class="button-container">
+        <a href="{% url 'django.contrib.auth.views.login' %}#login-form" class="button rsr-login">Sign in with <span class="rsr-type">Run<em>Spot</em>Run</span></a>
+    </li>
+</ul>

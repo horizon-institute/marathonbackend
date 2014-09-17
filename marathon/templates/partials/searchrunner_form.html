@@ -1,0 +1,9 @@
+<form action="{% url 'search_runner' %}" id="searchrunner-form">
+    <h2>Search for a runner in videos:</h2>
+    <ul class="fieldcontainer">
+        {{ form.as_ul }}
+    </ul>
+    <div class="button-container">
+        <input type="submit" value="Search" class="button" />
+    </div>
+</form>

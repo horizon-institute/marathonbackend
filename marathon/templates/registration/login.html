@@ -6,8 +6,13 @@
 {% block header_declarations %}
 <script type="text/javascript">
     $(function() {
+        if (document.location.hash) {
+            $("#signin-providers,#login-form").hide();
+            $(document.location.hash).show();
+        }
         $(".rsr-login,.back-button").click(function() {
             $("#signin-providers,#login-form").slideToggle();
+            return false;
         });
     });
 </script>
@@ -15,22 +20,9 @@
 
 {% block content %}
 
-<ul id="signin-providers" {% if form.errors %}style="display: none;"{% endif %}>
-    <li class="button-container">
-        <a rel="nofollow" href="{% url "socialauth_begin" "facebook" %}" class="button fb-login">Sign in with Facebook</a>
-    </li>
-    <li class="button-container">
-        <a rel="nofollow" href="{% url "socialauth_begin" "google-oauth2" %}" class="button google-login">Sign in with Google</a>
-    </li>
-    <li class="button-container">
-        <a rel="nofollow" href="{% url "socialauth_begin" "twitter" %}" class="button twitter-login">Sign in with Twitter</a>
-    </li>
-    <li class="button-container">
-        <a href="#login-form" class="button rsr-login">Sign in with <span class="rsr-type">Run<em>Spot</em>Run</span></a>
-    </li>
-</ul>
+{% include "partials/login.html" %}
 
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}" id="login-form" {% if form.errors %}style="display: block;"{% endif %}>
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}#login-form" id="login-form">
     <div>
         <a href="#signin-providers" class="back-button">&laquo;</a>
     </div>

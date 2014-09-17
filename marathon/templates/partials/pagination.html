@@ -1,0 +1,21 @@
+{% if paginator.num_pages > 1 %}
+<div class="pagination">
+    Showing results {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{paginator.count}}
+    &mdash; Pages:
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+    {% endif %}
+    {% for p in paginator.page_range %}
+    {% if p == page_obj.number %}
+        <strong>
+            {{p}}
+        </strong>
+    {% else %}
+        <a href="?page={{ p }}">{{p}}</a>
+    {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}

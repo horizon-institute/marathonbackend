@@ -1,18 +1,42 @@
 {% extends "base.html" %}
 
+{% block title %}{{block.super}}: {% if form.is_valid %}Tags of runner {{form.cleaned_data.runner_number}} in {{form.cleaned_data.event.name}}{% else %}Search for a runner{% endif %}{% endblock %}
+{% block page_title %}<span class="page-title">{% if form.is_valid %}Tags of runner {{form.cleaned_data.runner_number}} in {{form.cleaned_data.event.name}}{% else %}Search for a runner{% endif %}</span>{% endblock %}
+
 {% block content %}
-<h2>Search for a runner in videos:</h2>
-<form id="searchrunner-form">
-    <ul class="fieldcontainer">
-        {{ form.as_ul }}
-    </ul>
-    <div class="button-container">
-        <input type="submit" value="Search" class="button" />
-    </div>
-    
-</form>
+
 {% if form.is_valid %}
-<h3>Runner <strong>{{form.cleaned_data.runner_number}}</strong> was tagged <strong>{{object_list.count}}</strong> time{% if object_list.count > 1 %}s{% endif %} at <strong>{{form.cleaned_data.event.name}}</strong></h3>
-{{object_list}}
+<div class="content-block-wrapper">
+<div class="content-block">
+<h3>Runner
+    <strong>{{form.cleaned_data.runner_number}}</strong>
+    was
+    {% if paginator.count %}
+        tagged
+        {% if paginator.count == 1 %}
+            <strong>once</strong>
+        {% else %}
+            <strong>{{paginator.count}}</strong> times
+        {% endif %}
+    {% else %}
+        <strong>not</strong> tagged
+    {% endif %}
+    <br/>at <strong>{{form.cleaned_data.event.name}}</strong>
+</h3>
+{% if paginator.count %}
+{% include "partials/pagination.html" %}
+<img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}">
+</div>
+</div>
 {% endif %}
+
+{% endif %}
+<div class="content-block-wrapper">
+<div class="content-block">
+{% include "partials/searchrunner_form.html" %}
+</div>
+</div>
+
+{% include "partials/taglist.html" %}
+
 {% endblock %}

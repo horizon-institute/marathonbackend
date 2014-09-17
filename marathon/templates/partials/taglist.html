@@ -1,0 +1,33 @@
+{% if paginator.count %}
+<ul class="fullwidth-float">
+{% for runnertag in object_list %}
+    <li class="runnertag-item">
+        <video class="runnertag-video" src="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}" width="225" height="170" controls> </video>
+        <ul class="runnertag-metadata">
+        {% if not form %}
+            <li>
+                Event: {{runnertag.video.event.name}}
+            </li>
+            <li>
+                {% if runnertag.is_hot_tag %}
+                &ldquo;hot&rdquo; tag
+                {% else %}
+                Runner #{{runnertag.runner_number}}
+                {% endif %}
+            </li>
+        {% endif %}
+            <li>
+                {{runnertag.time|date:"D d/m/Y H:i"}}
+            </li>
+            <li>
+                Tag at {{runnertag.video_time}}s in the video
+            </li>
+            <li>
+                <img src="http://maps.googleapis.com/maps/api/staticmap?size=225x80&zoom=14&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}"></td>
+            </li>
+        </ul>
+    </li>
+{% endfor %}
+</ul>
+{% include "partials/pagination.html" %}
+{% endif %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{block.super}}: My videos{% endblock %}
+{% block page_title %}<span class="page-title">My videos</span>{% endblock %}
+
+{% block content %}
+
+<h3>You have uploaded
+    {% if paginator.count %}
+        <strong>{{paginator.count}}</strong>
+        video{% if paginator.count > 1 %}s{% endif %}
+    {% else %}
+        <strong>no video yet</strong>
+    {% endif %}
+</h3>
+{% if paginator.count %}
+{% include "partials/pagination.html" %}
+<ul class="fullwidth-float">
+{% for video in object_list %}
+    <li class="video-item">
+        <video class="video-video" src="{{video.url}}" width="225" height="170" controls> </video>
+        <ul class="video-metadata">
+            <li>
+                {{video.start_time|date:"D d/m/Y H:i"}}
+            </li>
+            <li>
+                Duration: {{video.duration}}s
+            </li>
+            <li>
+                {{video.tagcount}} Tag{% if video.tagcount > 1 %}s{% endif %} 
+            </li>
+        </ul>
+    </li>
+{% endfor %}
+</ul>
+{% include "partials/pagination.html" %}
+{% endif %}
+
+{% endblock %}

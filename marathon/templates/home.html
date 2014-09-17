@@ -1,15 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>You are connected as <strong>{{user.username}}</strong></p>
-{% if videos or runnertags or hottags %}
-<p>Congratulations{% if user.first_name %} {{user.first_name}}{% endif %},
-    you have uploaded {{videos}} video{% if videos > 1 %}s{% endif %}
-    and produced {{runnertags}} tag{% if runnertags > 1 %}s{% endif %}
-    of runners and {{hottags}} hot tag{% if hottags > 1 %}s{% endif %}!</p>
-{%else%}
-<p>Hello{% if user.first_name %} {{user.first_name}}{% endif %}, it looks like you haven't uploaded any videos yet!</p>
+{% if user.is_authenticated %}
+    <div class="content-block-wrapper">
+    <div class="content-block">
+        <h2>My activity</h2>
+        <p>You are connected as <strong>{{user.username}}</strong></p>
+    {% if videos or runnertags or hottags %}
+        <p>Congratulations{% if user.first_name %} {{user.first_name}}{% endif %},
+            you have uploaded {{videos}} video{% if videos > 1 %}s{% endif %}
+            {% if hottags or runnertags %}and produced{% endif %}
+            {% if runnertags %}{{runnertags}} runner tag{% if runnertags > 1 %}s{% endif %}{% endif %}
+            {% if hottags and runnertags %}and{% endif %}
+            {% if hottags %}{{hottags}} hot tag{% if hottags > 1 %}s{% endif %}{% endif %}</p>
+    {%else%}
+        <p>Hello{% if user.first_name %} {{user.first_name}}{% endif %},
+            it looks like you haven't uploaded any videos yet!</p>
+    {% endif %}
+        <div class="button-container">
+            {% if videos %}
+            <a href="{% url 'my_video_list'%}" class="button">Show my videos</a>
+            {% endif %}
+            {% if runnertags or hottags %}
+            <a href="{% url 'my_tag_list'%}" class="button">Show my tags</a>
+            {% endif %}
+            <a href="{% url 'django.contrib.auth.views.logout'%}?next=/home/" class="button" style="background: #800000;">Log out</a>
+        </div>
+    </div>
+    </div>
 {% endif %}
-<p>Download our app from Google Play</p>
-<p><a href="{% url 'django.contrib.auth.views.logout'%}?next=/">Log out</a></p>
+
+    <div class="content-block-wrapper">
+    <div class="content-block">
+        {% include "partials/searchrunner_form.html" %}
+    </div>
+    </div>
+
+{% if not user.is_authenticated %}
+    <div class="content-block-wrapper">
+    <div class="content-block">
+        <h2>Sign in to enjoy more features!</h2>
+        {% include "partials/login.html" %}
+    </div>
+    </div>
+{% endif %}
 {% endblock %}

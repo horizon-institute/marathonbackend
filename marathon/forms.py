@@ -22,9 +22,8 @@ class ContactRegistrationForm(forms.ModelForm):
 
 class RunnerSearchForm(forms.Form):
     event = forms.ModelChoiceField(queryset = Event.objects.filter(public=True), initial=Event.objects.get(is_current=True), required=True, error_messages={'required': 'Please choose an event'})
-    runner_number = forms.IntegerField(required=True, min_value=1, error_messages={'required': 'Please enter a runner number'})
-    
+    runner_number = forms.IntegerField(required=True, min_value=1, error_messages={'required': 'Please enter a runner number'})    
     def __init__(self, reqget, requser, *args, **kwargs):
-        super(RunnerSearchForm, self).__init__(*args, **kwargs)
+        super(RunnerSearchForm, self).__init__(reqget, *args, **kwargs)
         if requser.is_superuser:
             self.fields["event"].queryset = Event.objects.all()

@@ -88,6 +88,10 @@ class RunnerTag(GUIDModel):
     def video_time(self):
         return (self.time - self.video.start_time).seconds
     
+    @property
+    def is_hot_tag(self):
+        return (self.runner_number == -99)
+    
     def __unicode__(self):
         return "Runner #%d tagged by %s at %s"%(self.runner_number, self.video.spectator.name, self.time)
 
