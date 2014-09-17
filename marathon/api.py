@@ -177,7 +177,7 @@ class VideoResource(resources.ModelResource):
     class Meta:
         queryset = Video.objects.select_related('spectator','event').order_by("-start_time")
         resource_name = 'video'
-        fields = ['id', 'guid', 'start_time', 'duration', 'public']
+        fields = ['id', 'guid', 'start_time', 'duration', 'public', 'url']
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
         authorization = VideoAuthorization()
