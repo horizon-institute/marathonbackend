@@ -67,8 +67,11 @@ class RunnerTagList(ListView):
     
     def get_queryset(self):
         self.form = RunnerSearchForm(self.kwargs,self.request.user)
-        return RunnerTag.objects.select_related("video").filter(video__event=self.form.cleaned_data["event"],runner_number=self.form.cleaned_data["runner_number"]).order_by("time")
-    
+        if self.form.is_valid():
+            return RunnerTag.objects.select_related("video").filter(video__event=self.form.cleaned_data["event"],runner_number=self.form.cleaned_data["runner_number"]).order_by("time")
+        else:
+            return RunnerTag.objects.none()
+        
     def get_context_data(self, **kwargs):
         context = super(RunnerTagList, self).get_context_data(**kwargs)
         context["form"] = self.form
