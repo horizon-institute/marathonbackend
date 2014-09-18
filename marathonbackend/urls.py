@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from marathon.api import Activity, SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource
 from marathon.views import register, home, landing, RunnerTagList, MyVideoList, MyTagList, searchrunner
 from tastypie.api import Api
+from django.views.generic import TemplateView
 
 admin.autodiscover()
 
@@ -35,4 +36,6 @@ urlpatterns = patterns('',
     url(r'^social-auth/', include('social_auth.urls')),
     url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),
     url(r'^api/', include(api.urls)),
+    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt',
+                                  content_type='text/plain'))
 )

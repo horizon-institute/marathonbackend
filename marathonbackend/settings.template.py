@@ -115,3 +115,5 @@ LOGIN_REDIRECT_URL = "/"
 SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
 
 GMAPS_API_KEY = ""
+
+REGISTRATION_EMAIL_DESTINATION = []

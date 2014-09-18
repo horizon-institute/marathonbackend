@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /static/
+Disallow: /signup/
+Disallow: /event/
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /social-auth/
+Disallow: /oauth2/
+Disallow: /api/
+Disallow: /runner-tags/
+Disallow: /hot-tags/

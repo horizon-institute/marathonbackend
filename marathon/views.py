@@ -7,6 +7,8 @@ from marathon.models import  Video, RunnerTag
 from django.views.generic import ListView
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.core.mail import send_mail
+from datetime import datetime
 
 def register(request):
     if request.method == 'POST':
@@ -33,6 +35,13 @@ def landing(request):
         if form.is_valid():
             showform = False
             form.save()
+            email = form.cleaned_data["email"]
+#             send_mail(
+#                       "New registration on RunSpotRun.co.uk",
+#                       "%s has registered on RunSpotRun.co.uk at %s"%(email,datetime.now()),
+#                       email,
+#                       settings.REGISTRATION_EMAIL_DESTINATION,
+#                       fail_silently=True)
     else:
         form = ContactRegistrationForm()
     return render(request, "landing.html", {
