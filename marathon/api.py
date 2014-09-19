@@ -1,8 +1,8 @@
 from tastypie import resources, fields
-from tastypie.authentication import MultiAuthentication, SessionAuthentication, ApiKeyAuthentication
+from tastypie.authentication import MultiAuthentication, SessionAuthentication, ApiKeyAuthentication, BasicAuthentication
 from tastypie.authorization import Authorization
 from oauth2_tastypie.authentication import OAuth20Authentication
-from marathon.models import Spectator, Video, RunnerTag, PositionUpdate, Event
+from marathon.models import Spectator, Video, RunnerTag, PositionUpdate, Event, ContentFlag
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.conf.urls import url
 from django.db.models import Q
@@ -398,4 +398,56 @@ class Activity(resources.Resource):
         activitylist.sort(key=lambda a: a.time, reverse=True)
         
         return activitylist
+
+class FlaggedContentAuthorization(Authorization):
     
+    def read_list(self, object_list, bundle):
+        current_user = bundle.request.user
+        if current_user.is_authenticated:
+            if current_user.is_superuser:
+                return object_list
+            return object_list.filter(user_id=current_user.id)
+        else:
+            return None
+
+    def read_detail(self, object_list, bundle):
+        if bundle.request.user.is_authenticated:
+            if bundle.request.user.is_superuser:
+                return True
+            return (bundle.obj.user == bundle.request.user)
+        else:
+            return False
+    
+
+class AnonymousAuthentication(BasicAuthentication):
+    
+    def is_authenticated(self, request, **kwargs):
+        if request.method == "POST":
+            return True
+        else:
+            return super(AnonymousAuthentication, self).is_authenticated(request, **kwargs)
+
+class FlaggedContentResource(resources.ModelResource):
+    
+    video = fields.ToOneField(VideoResource, attribute='video_content', null=True, full=True, readonly=True)
+    positionupdate = fields.ToOneField(PositionUpdateResource, attribute='positionupdate_content', null=True, full=True, readonly=True)
+    runnertag = fields.ToOneField(RunnerTagResource, attribute='runnertag_content', null=True, full=True, readonly=True),
+    user_id = fields.IntegerField(attribute="user_id", null=True, blank=True, readonly=True)
+    
+    class Meta:
+        queryset = ContentFlag.objects.order_by("-flag_date")
+        resource_name = 'flaggedcontent'
+        fields = ['id', 'flag_date', 'content_type', 'content_id', 'reason' ]
+        allowed_methods = ['get', 'post']
+        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication(), AnonymousAuthentication())
+        authorization = FlaggedContentAuthorization()
+        ordering = ["flag_date"]
+    
+    def hydrate(self, bundle):
+        print bundle.request.user, bundle.request.user.is_anonymous
+        if bundle.request.user.is_anonymous():
+            bundle.obj.user = None
+        else:
+            bundle.obj.user = bundle.request.user
+        return bundle
+        

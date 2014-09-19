@@ -18,7 +18,13 @@
 <ul class="fullwidth-float">
 {% for video in object_list %}
     <li class="video-item">
+    {% if video.url %}
         <video class="video-video" src="{{video.url}}" width="225" height="170" controls> </video>
+    {% else %}
+        <div class="video-video">
+            <p>Video not online</p>
+        </div>
+    {% endif %}
         <ul class="video-metadata">
             <li>
                 {{video.start_time|date:"D d/m/Y H:i"}}

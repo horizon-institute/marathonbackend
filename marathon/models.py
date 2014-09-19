@@ -101,3 +101,34 @@ class ContactRegistration(models.Model):
     
     def __unicode__(self):
         return self.email
+
+class ContentFlag(models.Model):
+    CONTENT_TYPE_CLASSES = { modelclass.__name__: modelclass for modelclass in [PositionUpdate, RunnerTag, Video]}
+    CONTENT_TYPE_CHOICES = tuple([(k, k) for k in CONTENT_TYPE_CLASSES])
+    user = models.ForeignKey(User, db_index=True, null=True, blank=True)
+    content_type = models.CharField(max_length=15, choices=CONTENT_TYPE_CHOICES)
+    content_id = models.IntegerField(db_index=True, null=False, blank=False)
+    reason = models.TextField(null=True, blank=True)
+    flag_date = models.DateTimeField(default=datetime.datetime.now)
+    
+    @property
+    def content(self):
+        try:
+            return self.CONTENT_TYPE_CLASSES[self.content_type].objects.get(id=self.content_id)
+        except:
+            return None
+        
+    @property
+    def video_content(self):
+        return self.content if (self.content_type == "Video") else None
+    
+    @property
+    def runnertag_content(self):
+        return self.content if (self.content_type == "RunnerTag") else None
+    
+    @property
+    def positionupdate_content(self):
+        return self.content if (self.content_type == "PositionUpdate") else None
+     
+    def __unicode__(self):
+        return "Flagged %s: id=%d"%(self.content_type,self.content_id)

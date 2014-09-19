@@ -2,7 +2,13 @@
 <ul class="fullwidth-float">
 {% for runnertag in object_list %}
     <li class="runnertag-item">
+    {% if runnertag.video.url %}
         <video class="runnertag-video" src="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}" width="225" height="170" controls> </video>
+    {% else %}
+        <div class="runnertag-video">
+            <p>Video not online</p>
+        </div>
+    {% endif %}
         <ul class="runnertag-metadata">
         {% if not form %}
             <li>
@@ -25,9 +31,85 @@
             <li>
                 <img src="http://maps.googleapis.com/maps/api/staticmap?size=225x80&zoom=14&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}&key={{GMAPS_API_KEY}}"></td>
             </li>
+            <li>
+                <a class="small-button flag-video" href="#" data-content-type="Video" data-content-id="{{runnertag.video.id}}">Flag this video</a>
+            </li>
         </ul>
     </li>
 {% endfor %}
 </ul>
+<div class="lightbox-container" id="flag-lightbox-container">
+    <div class="lightbox-wrapper">
+        <form class="lightbox-content" id="flagging-form">
+            <p>Please tell us why you're flagging this content</p>
+            <textarea id="flagging-reason" name="reason" class="flagging-textarea" rows="5"> </textarea>
+            <div class="flagging-bottomline">
+                <button class="small-button flagging-button red-button" id="cancel-flagging">Cancel</button>
+                <input class="small-button flagging-button" type="submit" id="submit-flagging" value="Flag content" />
+            </div>
+        </form>
+        <div class="lightbox-content" id="flagging-results">
+            <h3 id="flagging-processing">Your request is being sent to the server.</h3>
+            <h3 id="flagging-success">Thanks for submitting this request, our team will review this content.</h3>
+            <h3 id="flagging-error">Error while submitting request.</h3>
+            <a class="button" id="flagging-return" href="#">Back to search results</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function() {
+        var endpoint = '{% url "api_dispatch_list" api_name="v1" resource_name="flaggedcontent" %}',
+            csrf_token = '{{csrf_token}}',
+            content_type = null, content_id = null, lbx = $("#flag-lightbox-container");
+        $(".flag-video").click(function() {
+            $("#flagging-reason").val("");
+            $("#flagging-results").hide();
+            $("#flagging-form").show();
+            var btn = $(this);
+            content_type = btn.attr("data-content-type");
+            content_id = btn.attr("data-content-id");
+            lbx.show();
+            return false;
+        });
+        function backToResults() {
+            content_type = null;
+            content_id = null;
+            lbx.hide();
+        }
+        $("#cancel-flagging, #flagging-return").click(function() {
+            backToResults();
+            return false;
+        });
+        $("#submit-flagging").click(function() {
+            $("#flagging-processing").show();
+            $("#flagging-error,#flagging-success").hide();
+            $("#flagging-results,#flagging-form").slideToggle();
+            var data = JSON.stringify({
+                "content_type": content_type,
+                "content_id": content_id,
+                "reason": $("#flagging-reason").val()
+            });
+            $.ajax({
+                "type": "POST",
+                "url": endpoint,
+                "data": data,
+                "contentType":"application/json; charset=utf-8",
+                "success": function() {
+                    $("#flagging-processing").hide();
+                    $("#flagging-success").show();
+                },
+                "error": function() {
+                    $("#flagging-processing").hide();
+                    $("#flagging-error").show();
+                    console.log(arguments);
+                },
+                "headers": {
+                    "X-CSRFToken": csrf_token
+                }
+            });
+            return false;
+        });
+    });
+</script>
 {% include "partials/pagination.html" %}
 {% endif %}
