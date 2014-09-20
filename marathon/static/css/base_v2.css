@@ -1,0 +1,82 @@
+@import url("../fonts/Roboto.css");
+
+body {
+    font-family: 'Roboto'; font-size: 16px; background: #ffffff; color: #808080;
+    font-weight: 300;
+}
+
+@media (max-width:500px) {
+body { font-size: 14px; }
+}
+
+@media (max-width:380px) {
+body { font-size: 13px; }
+}
+
+#top-part {
+    color: #ffffff; background: #404040 url(../images/big-background.jpg) center bottom; padding: 2em 0;
+}
+
+header, #top-content-wrapper, #bottom-content-wrapper {
+    max-width: 1000px; margin: 0 auto; padding: 0 1em;
+}
+
+a {
+    color: #f39c12; text-decoration: none;
+}
+
+a:hover {
+    color: #acadad; text-decoration: underline;
+}
+
+strong {
+    font-weight: 900;
+}
+
+em {
+    font-style: italic;
+}
+
+h1 {
+    font-size: 2.2em;
+}
+
+h1 a:hover, h1 a:visited {
+    text-decoration: none;
+}
+
+input, textarea, select {
+    font-family: inherit; border: none; box-sizing: border-box; color: inherit;
+}
+
+#top-part input, #top-part textarea, #top-part select {
+    background: rgba(0,0,0,.5);
+}
+
+#top-part input[type=submit]:hover, #top-part button:hover {
+    background: #f39c12; color: #252525;
+}
+
+h1 img {
+    height: .9em; margin-right: .33em; line-height: .8em; margin-bottom: -.08em;
+}
+
+.rsr-type {
+    color: #ffffff; font-weight: 200; text-transform: capitalize;
+}
+
+.rsr-type em {
+    font-style: normal; color: #ffb060;
+}
+
+.get-app-container {
+    float: right; height: 2.5625em;
+}
+
+.get-app-container:hover {
+    opacity: .8;
+}
+
+.get-app-container img {
+    height: 100%;
+}

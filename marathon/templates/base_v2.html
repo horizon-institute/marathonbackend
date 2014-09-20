@@ -1,0 +1,45 @@
+{% load static from staticfiles %}
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, width=device-width, user-scalable=no">
+        <title>{% block title %}Run Spot Run{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{% static "css/reset.css" %}" />
+        <link rel="stylesheet" type="text/css" href="{% static "lib/jquery-ui.min.css" %}" />
+        <link rel="stylesheet" type="text/css" href="{% static "css/base_v2.css" %}" />
+        <script src="{% static "lib/jquery.min.js" %}"></script>
+        <script src="{% static "lib/underscore-min.js" %}"></script>
+        <script src="{% static "lib/jquery-ui.min.js" %}"></script>
+        {% block header_declarations %}
+        {% endblock %}
+    </head>
+    <body>
+        <div id="top-part">
+            
+            <header>
+                <div class="get-app-container">
+                    <a href="https://play.google.com/store/apps/details?id=uk.ac.horizon.runspotrun"
+                        title="Get the RunSpotRun app from the Google Play Store" target="_blank">
+                      <img alt="Get the RunSpotRun app from the Google Play Store"
+                           src="{% static "images/android-app.png" %}" />
+                    </a>
+                </div>
+                <h1>
+                    <a href="{% url 'landing' %}">
+                        <img src="{% static 'images/concept-icon.png' %}">
+                        <span class="rsr-type">Run<em>Spot</em>Run</span>
+                    </a>
+                </h1>
+            </header>
+            <div id="top-content-wrapper">
+                {% block top_content %}
+                {% endblock %}
+            </div>
+        </div>
+        <div id="bottom-content-wrapper">
+            {%block bottom_content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

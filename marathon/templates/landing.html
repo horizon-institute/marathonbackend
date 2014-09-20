@@ -1,51 +1,81 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
+{% load static from staticfiles %}
 
-{% block content %}
+{% block header_declarations %}
+        <link rel="stylesheet" type="text/css" href="{% static "css/landing.css" %}" />
+{% endblock %}
 
+{% block top_content %}
+
+<div id="landing-form-wrapper">
 {% if form.is_valid %}
 <h3>Thanks, we'll send you an email at <strong>{{email}}</strong> when RunSpotRun is online!</h3>
 {% endif %}
 {% if showform %}
-<form action="" method="post" id="landing-form" class="fullwidth-float">
+<form action="" method="post" id="landing-form">
     {% if form.email.errors %}
         {{ form.email.errors }}
     {% endif %}
-    <div class="content-block-wrapper">
+    <div id="landing-email-wrapper">
         {{ form.email }}
+        <img id="landing-email-image" src="{% static 'images/mail.png' %}">
     </div>
-    <div class="content-block-wrapper">
-        <input id="landing-submit" type="submit" class="button" value="Register to find out more">
+    <div id="landing-submit-wrapper">
+        <input id="landing-submit" type="submit" class="button" value="Register">
     </div>
 {% csrf_token %}
     
 </form>
 {% endif %}
-    <div class="fullwidth-float">
-    <div class="content-block-wrapper">
-        <div class="landing-about-block landing-runners">
+</div>
+
+{% endblock %}
+{% block bottom_content %}
+
+<div id="landing-bottom">
+    <div class="landing-about-block" id="landing-runners">
+        <div class="landing-about-icon">
             <h2>Runners</h2>
+            <img src="{% static 'images/running.png' %}" alt="Runners">
+        </div>
+        <div class="landing-about-section">
             <h3>Support</h3>
             <p>Get your supporters to capture your race from start to finish.</p>
-            <h3>Find</h3>
-            <p>Find videos of you and other runners you know.</p>
+            <img src="{% static 'images/crutch-64.png' %}" alt="Support">
+        </div>
+        <div class="landing-about-section">
             <h3>Re-live</h3>
             <p>Re-live your own race from everybody's uploaded videos.</p>
-            <div class="landing-credits">Photo Creative Commons CC-BY US Army</div>
+            <img src="{% static 'images/satellite-64.png' %}" alt="Re-live">
+        </div>
+        <div class="landing-about-section">
+            <h3>Find</h3>
+            <p>Find videos of you and other runners you know.</p>
+            <img src="{% static 'images/search-64.png' %}" alt="Find">
         </div>
     </div>
-    
-    <div class="content-block-wrapper">
-        <div class="landing-about-block landing-supporters">
+
+    <div class="landing-about-block" id="landing-supporters">
+        <div class="landing-about-icon">
             <h2>Supporters</h2>
+            <img src="{% static 'images/supports.png' %}" alt="Supporters">
+        </div>
+        <div class="landing-about-section">
             <h3>Capture</h3>
             <p>Download the app to take footage of your favourite runners.</p>
-            <h3>Tag</h3>
-            <p>Tag the runners you see with their race number.</p>
+            <img src="{% static 'images/camera-64.png' %}" alt="Capture">
+        </div>
+        <div class="landing-about-section">
             <h3>Share</h3>
             <p>Upload your videos for runners and supporters to enjoy!</p>
-            <div class="landing-credits">Photo Creative Commons CC-BY-SA Aurelien Guichard</div>
+            <img src="{% static 'images/share-64.png' %}" alt="Tag">
+        </div>
+        <div class="landing-about-section">
+            <h3>Tag</h3>
+            <p>Tag the runners you see with their race number.</p>
+            <img src="{% static 'images/tag-64.png' %}" alt="Tag">
         </div>
     </div>
-    </div>
+</div>
 
 {% endblock %}

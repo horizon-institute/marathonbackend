@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from marathon.api import Activity, SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
-from marathon.views import register, home, landing, RunnerTagList, MyVideoList, MyTagList, searchrunner
+from marathon.views import register, home, landing, RunnerTagList, MyVideoList, MyTagList, searchrunner, customlogin
 from tastypie.api import Api
 from django.views.generic import TemplateView
 
@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^home/', home, name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include(auth_urls)),
+    url(r'^login/', customlogin, name='login'),
     url(r'^signup/', register, name='signup'),
     url(r'^social-auth/', include('social_auth.urls')),
     url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),

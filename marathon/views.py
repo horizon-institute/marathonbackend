@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from marathon.forms import UserForm, ContactRegistrationForm, RunnerSearchForm
+from marathon.forms import UserForm, ContactRegistrationForm, RunnerSearchForm, CustomLoginForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.db.models import Count
@@ -35,7 +35,7 @@ def landing(request):
         if form.is_valid():
             showform = False
             form.save()
-            email = form.cleaned_data["email"]
+#             email = form.cleaned_data["email"]
 #             send_mail(
 #                       "New registration on RunSpotRun.co.uk",
 #                       "%s has registered on RunSpotRun.co.uk at %s"%(email,datetime.now()),
@@ -60,6 +60,19 @@ def home(request):
         context["hottags"] = rtqs.filter(runner_number=-99).count()
         context["videos"] = Video.objects.filter(spectator__user=request.user).count()
     return render(request, "home.html", context)
+
+def customlogin(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(request.POST)
+        if form.is_valid():
+            login_user = authenticate(username=form.cleaned_data.get("user"), password=form.cleaned_data.get("password"))
+            login(request, login_user)
+            return HttpResponseRedirect(reverse('home'))
+    else:
+        form = CustomLoginForm()
+    return render(request, "login.html", {
+        'form': form,
+    })
 
 def searchrunner(request):
     if 'runner_number' in request.GET or 'event' in request.GET:
