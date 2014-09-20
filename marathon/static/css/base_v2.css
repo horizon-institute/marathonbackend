@@ -15,6 +15,7 @@ body { font-size: 13px; }
 
 #top-part {
     color: #ffffff; background: #404040 url(../images/big-background.jpg) center bottom; padding: 2em 0;
+    background-size: cover;
 }
 
 header, #top-content-wrapper, #bottom-content-wrapper {
@@ -66,11 +67,11 @@ h1 img {
 }
 
 .rsr-type em {
-    font-style: normal; color: #ffb060;
+    font-style: normal; color: #f39c12;
 }
 
 .get-app-container {
-    float: right; height: 2.5625em;
+    float: right; height: 2.6875em;
 }
 
 .get-app-container:hover {
