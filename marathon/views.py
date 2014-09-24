@@ -64,13 +64,14 @@ def processlogin(request):
 def home(request):
     context = {}
     if request.user.is_authenticated():
+        context["login_form"] = None
+    else:
+        context["login_form"] = processlogin(request)
+    if request.user.is_authenticated():
         rtqs = RunnerTag.objects.filter(video__spectator__user=request.user)
         context["runnertags"] = rtqs.exclude(runner_number=-99).count()
         context["hottags"] = rtqs.filter(runner_number=-99).count()
         context["videos"] = Video.objects.filter(spectator__user=request.user).count()
-        context["login_form"] = None
-    else:
-        context["login_form"] = processlogin(request)
     context["runner_search_form"] = RunnerSearchForm(None,request.user)
     return render(request, "home.html", context)
 
