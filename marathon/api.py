@@ -7,6 +7,7 @@ from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.conf.urls import url
 from django.db.models import Q
 import datetime
+from django.core.urlresolvers import reverse
 
 class SpectatorAuthorization(Authorization):
     
@@ -343,7 +344,7 @@ class ActivityWrapper(object):
             self.spectator_id = getattr(spectator,"id",None)
             self.spectator_name = getattr(spectator,"name",None)
             self.time = getattr(item,"start_time",getattr(item,"time",None))
-            for a in ["latitude","longitude","accuracy","runner_number","guid"]:
+            for a in ["latitude","longitude","accuracy","runner_number","guid","id"]:
                 setattr(self,a,getattr(item,a,None))
 
 
@@ -364,8 +365,13 @@ class Activity(resources.Resource):
         allowed_methods = ['get']
         object_class = ActivityWrapper
     
+    def get_resource_uri(self, *args):
+        if len(args):
+            bundle = args[0]
+            return reverse("api_dispatch_detail", kwargs={"api_name":"v1", "resource_name":bundle.obj.type.lower(), "pk":bundle.obj.id})
+        return super(Activity, self).get_resource_uri(*args)
+    
     def obj_get_list(self, bundle, **kwargs):
-        print "Calling obj_get_list", bundle.request.GET, kwargs
         
         timespan = bundle.request.GET.get("timespan", False)
         

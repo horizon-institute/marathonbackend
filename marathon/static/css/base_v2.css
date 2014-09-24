@@ -14,7 +14,7 @@ body { font-size: 13px; }
 }
 
 #top-part {
-    color: #ffffff; background: #404040 url(../images/big-background.jpg) center bottom; padding: 2em 0;
+    color: #ffffff; background: #404040 url(../images/big-background.jpg) center; padding: 2em 0;
     background-size: cover;
 }
 
@@ -46,20 +46,57 @@ h1 a:hover, h1 a:visited {
     text-decoration: none;
 }
 
-input, textarea, select {
-    font-family: inherit; border: none; box-sizing: border-box; color: inherit;
+.page-title:before {
+    content: "»"; padding: 0 .2em;
 }
 
-#top-part input, #top-part textarea, #top-part select {
-    background: rgba(0,0,0,.5);
+.page-title {
+    font-size: .5em; font-weight: 200;
 }
 
-#top-part input[type=submit]:hover, #top-part button:hover {
-    background: #f39c12; color: #252525;
+@media (max-width: 640px) {
+    .page-title:before {
+        display: none;
+    }
+    .page-title {
+        display: block; margin-left: 2.6em;
+    }
+}
+
+h2 {
+    font-size: 1em; font-weight: 400; margin: .5em 0 0;
+}
+
+h3 {
+    font-size: .9em; font-weight: 400; margin: .5em 0 0;
+}
+
+p {
+    font-size: .8em; margin: .2em 0;
+}
+
+input, textarea, select, button {
+    font-family: inherit; font-size: inherit;
+    border: none; box-sizing: border-box; color: inherit;
+    padding: .5em; margin: .25em 0; width: 100%;
+    background: #e0e0e0;
+}
+
+#top-part input, #top-part textarea, #top-part select, #top-part button {
+    background-color: rgba(0,0,0,.5);
+}
+
+input[type=submit] {
+    transition: color .5s, background .5s;
+    border-radius: .5em;
+}
+
+input[type=submit]:hover {
+    background-color: #f39c12 !important; color: #252525;
 }
 
 h1 img {
-    height: .9em; margin-right: .33em; line-height: .8em; margin-bottom: -.08em;
+    height: .85em; margin-right: .2em; line-height: .8em; margin-bottom: -.02em;
 }
 
 .rsr-type {
@@ -74,10 +111,117 @@ h1 img {
     float: right; height: 2.6875em;
 }
 
+@media (max-width:380px) {
+    .get-app-container {
+        float: none; margin-bottom: 1em;
+    }
+}
+
 .get-app-container:hover {
     opacity: .8;
 }
 
 .get-app-container img {
     height: 100%;
+}
+
+.two-columns {
+    display: table; width: 100%; margin: 2em 0;
+}
+
+.two-columns .column {
+    width: 48%; display: table-cell; position: relative; vertical-align: top;
+}
+
+.column:first-child {
+    padding-right: 2%;
+}
+
+.column:last-child {
+    padding-left: 2%;
+}
+
+.column:last-child:before {
+    content: "";
+    position: absolute; left: 0; top: 25%; bottom: 25%; border-left: 1px solid #e0e0e0;
+}
+
+@media (max-width: 420px) {
+    .two-columns {
+        display: block; margin: 0;
+    }
+    .two-columns .column {
+        display: block; width: 100%; margin: 2em 0;
+    }
+    .column:last-child:before {
+        display: none;
+    }
+}
+
+.medium-width {
+    max-width: 400px; margin: 0 auto;
+}
+
+.button {
+    margin: .5em 0; display: block; font-size: 1em;
+    line-height: 1.5em; padding: .5em; background-color: #202020;
+    background-position: 6px center; background-repeat: no-repeat; text-align: center;
+    box-shadow: 0 3px 6px rgba(255,255,255,.1) inset, 0 -3px 6px rgba(0,0,0,.1) inset;
+    border-style: none; border-radius: .5em; font-weight: 600; color: #ffffff;
+}
+
+.button:hover {
+    color: #F39C12; text-decoration: none; opacity: .8;
+}
+
+.fieldcontainer li {
+    width: 100%; clear: both;
+}
+
+.fieldcontainer label {
+    float: left; width: 40%; margin: .5em 0;
+}
+
+.fieldcontainer input,
+.fieldcontainer select {
+    padding: .25em; width: 60%;
+}
+
+.fieldcontainer input[type=checkbox] {
+    margin: .1em 0;
+}
+
+.lightbox-container {
+    position: fixed; background: rgba(127,127,127,.6); left: 0; top:0; bottom: 0; right: 0; display: none;
+}
+
+.lightbox-wrapper {
+    max-width: 500px; margin: 0 auto; padding: 20px;
+}
+
+.lightbox-content {
+    border-radius: 10px; padding: 20px;
+    border: 1px solid #808080;
+    box-shadow: 0 0 20px #606060;
+    background: #ffffff;
+}
+
+.flag-video {
+    width: 100%;
+}
+
+.flagging-textarea {
+    resize: none; width: 100%;
+}
+
+.flagging-bottomline {
+    text-align: right;
+}
+
+.flagging-button {
+    width: 48%;
+}
+
+#cancel-flagging {
+    float: left;
 }

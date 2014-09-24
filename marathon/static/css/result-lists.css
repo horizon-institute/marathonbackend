@@ -1,0 +1,36 @@
+.globalmap {
+    display: block; max-width: 100%; margin: 1em auto 0;
+}
+
+.pagination {
+    margin: .5em 0; font-size: .8em;
+}
+
+.runnertag-item, .video-item {
+    width: 225px; margin: 4px 3px; display: inline-block; vertical-align: top; padding: 7px;
+    border: 1px solid #cccccc; font-size: 13px;
+}
+
+.fullwidth-float {
+    float: left; width: 100%; clear: both;
+}
+
+.runnertag-video, .video-video {
+    width: 225px; height: 170px; background: #808080; color: #ffffff;
+}
+
+.runnertag-video p, .video-video p {
+    font-size: 14px; text-align: center; padding-top: 30px; font-style: italic;
+}
+
+.video-tagcount p, .video-tag {
+    cursor: pointer;
+}
+
+.video-tagcount p:hover, .video-tag:hover {
+    color: #F39C12; text-decoration: underline;
+}
+
+.video-tags {
+    display: none; max-height: 100px; overflow: auto;
+}

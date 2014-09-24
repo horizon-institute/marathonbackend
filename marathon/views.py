@@ -49,30 +49,39 @@ def landing(request):
         'email': request.POST["email"] if request.method == 'POST' else None,
         'form': form,
     })
-    
-def home(request):
-    context = {
-               "form": RunnerSearchForm(None,request.user)
-               }
-    if request.user.is_authenticated():
-        rtqs = RunnerTag.objects.filter(video__spectator__user=request.user)
-        context["runnertags"] = rtqs.exclude(runner_number=-99).count()
-        context["hottags"] = rtqs.filter(runner_number=-99).count()
-        context["videos"] = Video.objects.filter(spectator__user=request.user).count()
-    return render(request, "home.html", context)
 
-def customlogin(request):
+def processlogin(request):
     if request.method == 'POST':
         form = CustomLoginForm(request.POST)
         if form.is_valid():
             login_user = authenticate(username=form.cleaned_data.get("user"), password=form.cleaned_data.get("password"))
             login(request, login_user)
-            return HttpResponseRedirect(reverse('home'))
+            return None
     else:
         form = CustomLoginForm()
-    return render(request, "login.html", {
-        'form': form,
-    })
+    return form
+
+def home(request):
+    context = {}
+    if request.user.is_authenticated():
+        rtqs = RunnerTag.objects.filter(video__spectator__user=request.user)
+        context["runnertags"] = rtqs.exclude(runner_number=-99).count()
+        context["hottags"] = rtqs.filter(runner_number=-99).count()
+        context["videos"] = Video.objects.filter(spectator__user=request.user).count()
+        context["login_form"] = None
+    else:
+        context["login_form"] = processlogin(request)
+    context["runner_search_form"] = RunnerSearchForm(None,request.user)
+    return render(request, "home.html", context)
+
+def customlogin(request):
+    login_form = processlogin(request)
+    if login_form:
+        return render(request, "login.html", {
+            'login_form': login_form
+        })
+    else:
+        return HttpResponseRedirect(reverse('home'))
 
 def searchrunner(request):
     if 'runner_number' in request.GET or 'event' in request.GET:
@@ -81,7 +90,7 @@ def searchrunner(request):
         form = RunnerSearchForm(None,request.user)
     if form.is_valid():
         return HttpResponseRedirect(reverse('runner_results', kwargs={'event': request.GET["event"], 'runner_number': request.GET["runner_number"]}))
-    return render(request, "searchrunner.html", {"form": form})
+    return render(request, "searchrunner.html", {"runner_search_form": form})
 
 class RunnerTagList(ListView):
     template_name = "searchrunner.html"
@@ -97,7 +106,7 @@ class RunnerTagList(ListView):
         
     def get_context_data(self, **kwargs):
         context = super(RunnerTagList, self).get_context_data(**kwargs)
-        context["form"] = self.form
+        context["runner_search_form"] = self.form
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
@@ -107,17 +116,24 @@ class MyVideoList(ListView):
     paginate_by = 8
     
     def get_queryset(self):
-        return Video.objects.filter(spectator__user=self.request.user).annotate(tagcount=Count("runnertags")).order_by("start_time")
+        return Video.objects.filter(spectator__user=self.request.user).select_related('tags').annotate(tagcount=Count("runnertags")).order_by("-start_time")
+
+class AllVideosList(ListView):
+    template_name = "allvideos.html"
+    model = Video
+    paginate_by = 12
+    
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Video.objects.select_related('runnertags').annotate(tagcount=Count("runnertags")).order_by("-start_time")
+        else:
+            return Video.objects.none()
 
 class MyTagList(ListView):
     template_name = "mytags.html"
     model = RunnerTag
     paginate_by = 8
     tagtype = None
-    
-    def get(self, *args, **kwargs):
-        print kwargs
-        return super(MyTagList, self).get(*args, **kwargs)
     
     def get_queryset(self):
         qs = RunnerTag.objects.filter(video__spectator__user=self.request.user).select_related("video__event").order_by("time")
@@ -135,10 +151,25 @@ class MyTagList(ListView):
         
     def get_context_data(self, **kwargs):
         context = super(MyTagList, self).get_context_data(**kwargs)
-        print "get_context", self.tagtype
         context["tagtype"] = self.tagtype
         context["runnertag_count"] = self.runnertag_count
         context["hottag_count"] = self.hottag_count
         context["total_count"] = self.total_count
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
+        return context
+
+class AllTagsList(ListView):
+    template_name = "alltags.html"
+    model = RunnerTag
+    paginate_by = 12
+    
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return RunnerTag.objects.select_related("video__event").order_by("-time")
+        else:
+            return RunnerTag.objects.none()
+        
+    def get_context_data(self, **kwargs):
+        context = super(AllTagsList, self).get_context_data(**kwargs)
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context

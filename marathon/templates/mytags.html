@@ -1,12 +1,18 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
+{% load static from staticfiles %}
 
 {% block title %}{{block.super}}: My {{tagtype}} tags{% endblock %}
+
+{% block header_declarations %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/result-lists.css" %}" />
+{% endblock %}
+
 {% block page_title %}<span class="page-title">My {{tagtype}} tags</span>{% endblock %}
 
-{% block content %}
+{% block bottom_content %}
 
-<div class="content-block-wrapper">
-<div class="content-block">
+<div class="two-columns">
+    <div class="column">
 <h3>You have produced
     {% if paginator.count %}
         <strong>{{paginator.count}}</strong>
@@ -27,19 +33,16 @@
 <p>including <a href="{% url "my_tag_list" tagtype="hot" %}">{{hottag_count}} hot tag(s)</a> and <a href="{% url "my_tag_list" tagtype="runner" %}">{{runnertag_count}} runner tag(s)</a></p>
 {% endif %}
 
-{% include "partials/pagination.html" %}
 
 </div>
-</div>
 
+
+    <div class="column">
 {% if paginator.count %}
-
-<div class="content-block-wrapper">
-<div class="content-block">
 <img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}&key={{GMAPS_API_KEY}}">
-</div>
-</div>
 {% endif %}
+    </div>
+</div>
 
 {% include "partials/taglist.html" %}
 

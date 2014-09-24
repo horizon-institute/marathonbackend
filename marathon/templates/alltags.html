@@ -1,0 +1,45 @@
+{% extends "base_v2.html" %}
+{% load static from staticfiles %}
+
+{% block title %}{{block.super}}: All tags{% endblock %}
+
+{% block header_declarations %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/result-lists.css" %}" />
+{% endblock %}
+
+{% block page_title %}<span class="page-title">All tags</span>{% endblock %}
+
+{% block bottom_content %}
+
+{% if user.is_superuser %}
+<div class="two-columns">
+    <div class="column">
+<h3>Users have produced
+    {% if paginator.count %}
+        <strong>{{paginator.count}}</strong>
+       tag{% if paginator.count > 1 %}s (showing newest first){% endif %}
+    {% else %}
+        <strong>no tag yet</strong>
+    {% endif %}
+</h3>
+
+
+</div>
+
+
+    <div class="column">
+{% if paginator.count %}
+<img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}&key={{GMAPS_API_KEY}}">
+{% endif %}
+    </div>
+</div>
+
+{% include "partials/taglist.html" %}
+
+{% else %}
+
+<h3>You must be a superuser to access this page</h3>
+
+{% endif %}
+
+{% endblock %}

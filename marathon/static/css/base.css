@@ -90,14 +90,14 @@ p {
     margin: 6px 0; display: block; font-size: 16px;
     line-height: 24px; padding: 8px; background-color: #202020;
     background-position: 6px 4px; background-repeat: no-repeat; text-align: center;
-    box-shadow: 0 3px 6px rgba(255,255,255,.2) inset, 0 -3px 6px rgba(0,0,0,.2) inset, 0 0 2px #202020;
+    box-shadow: 0 3px 6px rgba(255,255,255,.1) inset, 0 -3px 6px rgba(0,0,0,.1) inset, 0 0 2px #202020;
     border-style: none; border-radius: 5px; font-weight: 600; color: #ffffff; border: 1px solid rgba(0,0,0,.2);
 }
 
 .small-button {
     margin: 4px 0; display: inline-block; font-size: 14px; box-sizing: border-box;
     line-height: 16px; padding: 4px; background-color: #202020; text-align: center; height: 30px;
-    box-shadow: 0 3px 6px rgba(255,255,255,.2) inset, 0 -3px 6px rgba(0,0,0,.2) inset, 0 0 2px #202020;
+    box-shadow: 0 3px 6px rgba(255,255,255,.1) inset, 0 -3px 6px rgba(0,0,0,.1) inset, 0 0 2px #202020;
     border-style: none; border-radius: 5px; color: #ffffff; border: 1px solid rgba(0,0,0,.2);
 }
 
@@ -307,7 +307,7 @@ footer p {
 }
 
 .runnertag-item, .video-item {
-    width: 225px; margin: 4px; float: left; padding: 6px; background: #303030;
+    width: 225px; margin: 3px; display: inline-block; vertical-align: top; padding: 3px; background: #303030;
 }
 
 .fullwidth-float {
@@ -319,7 +319,7 @@ footer p {
 }
 
 .runnertag-video p, .video-video p {
-    font-size: 14px; text-align: center; margin-top: 40px; font-style: italic;
+    font-size: 14px; text-align: center; padding-top: 40px; font-style: italic;
 }
 
 #post-contents {
@@ -386,4 +386,16 @@ footer p {
 
 #cancel-flagging {
     float: left;
+}
+
+.video-tagcount p, .video-tag {
+    cursor: pointer;
+}
+
+.video-tagcount p:hover, .video-tag:hover {
+    color: #F39C12; text-decoration: underline;
+}
+
+.video-tags {
+    display: none; max-height: 100px; overflow: auto;
 }

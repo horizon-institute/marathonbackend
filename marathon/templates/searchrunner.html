@@ -1,15 +1,20 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
+{% load static from staticfiles %}
 
-{% block title %}{{block.super}}: {% if form.is_valid %}Tags of runner {{form.cleaned_data.runner_number}} in {{form.cleaned_data.event.name}}{% else %}Search for a runner{% endif %}{% endblock %}
-{% block page_title %}<span class="page-title">{% if form.is_valid %}Tags of runner {{form.cleaned_data.runner_number}} in {{form.cleaned_data.event.name}}{% else %}Search for a runner{% endif %}</span>{% endblock %}
+{% block title %}{{block.super}}: {% if form.is_valid %}Tags of runner {{runner_search_form.cleaned_data.runner_number}} in {{runner_search_form.cleaned_data.event.name}}{% else %}Search for a runner{% endif %}{% endblock %}
 
-{% block content %}
+{% block header_declarations %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/result-lists.css" %}" />
+{% endblock %}
 
-{% if form.is_valid %}
-<div class="content-block-wrapper">
-<div class="content-block">
+{% block page_title %}<span class="page-title">{% if form.is_valid %}Tags of runner {{runner_search_form.cleaned_data.runner_number}} in {{runner_search_form.cleaned_data.event.name}}{% else %}Search for a runner{% endif %}</span>{% endblock %}
+
+{% block bottom_content %}
+<div class="two-columns">
+    <div class="column">
+{% if runner_search_form.is_valid %}
 <h3>Runner
-    <strong>{{form.cleaned_data.runner_number}}</strong>
+    <strong>{{runner_search_form.cleaned_data.runner_number}}</strong>
     was
     {% if paginator.count %}
         tagged
@@ -21,20 +26,17 @@
     {% else %}
         <strong>not</strong> tagged
     {% endif %}
-    at <strong>{{form.cleaned_data.event.name}}</strong>
+    at <strong>{{runner_search_form.cleaned_data.event.name}}</strong>
 </h3>
 {% if paginator.count %}
-{% include "partials/pagination.html" %}
 <img class="globalmap" src="http://maps.googleapis.com/maps/api/staticmap?size=360x160{% for runnertag in object_list %}&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}{% endfor %}&key={{GMAPS_API_KEY}}">
 {% endif %}
-</div>
-</div>
 
 {% endif %}
-<div class="content-block-wrapper">
-<div class="content-block">
+    </div>
+    <div class="column">
 {% include "partials/searchrunner_form.html" %}
-</div>
+    </div>
 </div>
 
 {% include "partials/taglist.html" %}

@@ -1,48 +1,15 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
+{% load static from staticfiles %}
+
+{% block header_declarations %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/home-login.css" %}" />
+{% endblock %}
 
 {% block title %}{{block.super}}: Sign in{% endblock %}
 {% block page_title %}<span class="page-title">Sign in</span>{% endblock %}
 
-{% block header_declarations %}
-<script type="text/javascript">
-    $(function() {
-        if (document.location.hash) {
-            $("#signin-providers,#login-form").hide();
-            $(document.location.hash).show();
-        }
-        $(".rsr-login,.back-button").click(function() {
-            $("#signin-providers,#login-form").slideToggle();
-            return false;
-        });
-    });
-</script>
-{% endblock %}
-
-{% block content %}
+{% block top_content %}
 
 {% include "partials/login.html" %}
 
-<form method="post" id="login-form">
-    <div>
-        <a href="#signin-providers" class="back-button">&laquo;</a>
-    </div>
-    
-    {% csrf_token %}
-
-    <ul class="fieldcontainer">
-        {{ form.as_ul }}
-    </ul>
-    
-    <div class="button-container">
-        <input class="button" type="submit" value="login" />
-    </div>
-
-    <input type="hidden" name="next" value="{{ next }}" />
-
-    <h2>Not a user yet?</h2>
-    <div class="button-container">
-        <a class="button" href="{% url 'signup' %}">Create your <span class="rsr-type">Run<em>Spot</em>Run</span> account</a>
-    </div>
-
-</form>
 {% endblock %}

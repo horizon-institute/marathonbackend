@@ -1,5 +1,6 @@
 {% if paginator.count %}
-<ul class="fullwidth-float">
+{% include "partials/pagination.html" %}
+<ul class="result-items">
 {% for runnertag in object_list %}
     <li class="runnertag-item">
     {% if runnertag.video.url %}

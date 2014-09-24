@@ -1,0 +1,23 @@
+#top-part #login-form {
+    margin-top: 2em;
+}
+
+#login-form label {
+    display: none;
+}
+
+.fb-login {
+    background-image: url(../images/fb-login.png); background-color: #3b5998;
+}
+
+.google-login {
+    background-image: url(../images/google-login.png); background-color: #DD4B39;
+}
+
+.twitter-login {
+    background-image: url(../images/twitter-login.png); background-color: #55acee;
+}
+
+.logout {
+    margin-top: 2em;
+}

@@ -21,7 +21,7 @@
         <img id="landing-email-image" src="{% static 'images/mail.png' %}">
     </div>
     <div id="landing-submit-wrapper">
-        <input id="landing-submit" type="submit" class="button" value="Register">
+        <input id="landing-submit" type="submit" value="Register">
     </div>
 {% csrf_token %}
     
@@ -32,8 +32,8 @@
 {% endblock %}
 {% block bottom_content %}
 
-<div id="landing-bottom">
-    <div class="landing-about-block" id="landing-runners">
+<div id="landing-about-block" class="two-columns">
+    <div class="column" id="landing-runners">
         <div class="landing-about-icon">
             <h2>Runners</h2>
             <img src="{% static 'images/running.png' %}" alt="Runners">
@@ -55,7 +55,7 @@
         </div>
     </div>
 
-    <div class="landing-about-block" id="landing-supporters">
+    <div class="column" id="landing-supporters">
         <div class="landing-about-icon">
             <h2>Supporters</h2>
             <img src="{% static 'images/supports.png' %}" alt="Supporters">

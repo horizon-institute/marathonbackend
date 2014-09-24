@@ -4,11 +4,13 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/result-lists.css" %}" />
 {% endblock %}
 
-{% block title %}{{block.super}}: My videos{% endblock %}
-{% block page_title %}<span class="page-title">My videos</span>{% endblock %}
+{% block title %}{{block.super}}: All videos{% endblock %}
+{% block page_title %}<span class="page-title">All videos</span>{% endblock %}
 
 {% block bottom_content %}
-<h3>You have uploaded
+
+{% if user.is_superuser %}
+<h3>Users have uploaded
     {% if paginator.count %}
         <strong>{{paginator.count}}</strong>
         video{% if paginator.count > 1 %}s (showing newest first){% endif %}
@@ -17,5 +19,11 @@
     {% endif %}
 </h3>
 {% include "partials/videolist.html" %}
+
+{% else %}
+
+<h3>You must be a superuser to access this page</h3>
+
+{% endif %}
 
 {% endblock %}

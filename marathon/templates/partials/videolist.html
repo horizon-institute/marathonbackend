@@ -1,0 +1,46 @@
+{% if paginator.count %}
+{% include "partials/pagination.html" %}
+<script>
+    $(function() {
+        $(".video-tagcount p").click(function() {
+            $(this).siblings("ul.video-tags").slideToggle();
+        });
+        $(".video-tag").click(function() {
+            var $this = $(this), time = parseInt($this.attr("data-video-time")), videos = $this.parents(".video-item").find("video");
+            if (videos.length) {
+                videos[0].currentTime = time;
+            }
+        });
+    });
+</script>
+<ul class="fullwidth-float">
+{% for video in object_list %}
+    <li class="video-item">
+    {% if video.url %}
+        <video class="video-video" src="{{video.url}}" width="225" height="170" controls> </video>
+    {% else %}
+        <div class="video-video">
+            <p>Video not online</p>
+        </div>
+    {% endif %}
+        <ul class="video-metadata">
+            <li>
+                {{video.start_time|date:"D d/m/Y H:i"}}
+            </li>
+            <li>
+                Duration: {{video.duration}}s
+            </li>
+            <li class="video-tagcount">
+                <p>{{video.tagcount}} Tag{% if video.tagcount > 1 %}s{% endif %}</p>
+                <ul class="video-tags">
+                {% for tag in video.runnertags.all %}
+                    <li class="video-tag" data-video-time="{{tag.video_time}}">Runner {{tag.runner_number}} at {{tag.video_time}}s</li>
+                {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    </li>
+{% endfor %}
+</ul>
+{% include "partials/pagination.html" %}
+{% endif %}

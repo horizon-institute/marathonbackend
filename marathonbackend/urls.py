@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from marathon.api import Activity, SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
-from marathon.views import register, home, landing, RunnerTagList, MyVideoList, MyTagList, searchrunner, customlogin
+from marathon.views import register, home, landing, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin
 from tastypie.api import Api
 from django.views.generic import TemplateView
 
@@ -27,8 +27,10 @@ urlpatterns = patterns('',
     url(r'^$', landing, name='landing'),
     url(r'^search-runner/', searchrunner, name='search_runner'),
     url(r'^videos/', login_required(MyVideoList.as_view()), name='my_video_list'),
+    url(r'^admin/videos/', login_required(AllVideosList.as_view()), name='all_videos'),
+    url(r'^admin/tags/', login_required(AllTagsList.as_view()), name='all_tags'),
     url(r'^tags/', login_required(MyTagList.as_view()), name='my_tag_list'),
-    url(r'^(?P<tagtype>\w+)-tags/', login_required(MyTagList.as_view()), name='my_tag_list'),
+    url(r'^(?P<tagtype>(runner|hot))-tags/', login_required(MyTagList.as_view()), name='my_tag_list'),
     url(r'^event/(?P<event>\d+)/runner/(?P<runner_number>\d+)/', RunnerTagList.as_view(), name='runner_results'),
     url(r'^home/', home, name='home'),
     url(r'^admin/', include(admin.site.urls)),

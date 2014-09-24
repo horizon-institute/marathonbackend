@@ -9,3 +9,6 @@ Disallow: /oauth2/
 Disallow: /api/
 Disallow: /runner-tags/
 Disallow: /hot-tags/
+Disallow: /videos/
+Disallow: /all-videos/
+Disallow: /all-tags/
