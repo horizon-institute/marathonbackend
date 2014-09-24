@@ -26,7 +26,7 @@
                     </a>
                 </div>
                 <h1>
-                    <a href="{% url 'landing' %}">
+                    <a href="{% if user.is_authenticated %}{% url 'home' %}{% else %}{% url 'landing' %}{% endif %}">
                         <img src="{% static 'images/running-small.png' %}">
                         <span class="rsr-type">Run<em>Spot</em>Run</span>
                     </a>
