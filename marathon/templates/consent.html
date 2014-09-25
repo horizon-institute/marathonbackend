@@ -1,0 +1,15 @@
+{% extends "base_v2.html" %}
+
+{% block title %}{{block.super}}: Research and consent{% endblock %}
+{% block page_title %}<span class="page-title">Research and consent</span>{% endblock %}
+
+{% block bottom_content %}
+
+<div class="two-columns">
+    <div class="column">
+{% include "partials/consent-stuff.html" %}
+
+    </div>
+</div>
+
+{% endblock %}

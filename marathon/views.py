@@ -7,8 +7,6 @@ from marathon.models import  Video, RunnerTag
 from django.views.generic import ListView
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.core.mail import send_mail
-from datetime import datetime
 
 def register(request):
     if request.method == 'POST':
@@ -35,13 +33,6 @@ def landing(request):
         if form.is_valid():
             showform = False
             form.save()
-#             email = form.cleaned_data["email"]
-#             send_mail(
-#                       "New registration on RunSpotRun.co.uk",
-#                       "%s has registered on RunSpotRun.co.uk at %s"%(email,datetime.now()),
-#                       email,
-#                       settings.REGISTRATION_EMAIL_DESTINATION,
-#                       fail_silently=True)
     else:
         form = ContactRegistrationForm()
     return render(request, "landing.html", {
@@ -63,15 +54,10 @@ def processlogin(request):
 
 def home(request):
     context = {}
-    if request.user.is_authenticated():
-        context["login_form"] = None
-    else:
-        context["login_form"] = processlogin(request)
-    if request.user.is_authenticated():
-        rtqs = RunnerTag.objects.filter(video__spectator__user=request.user)
-        context["runnertags"] = rtqs.exclude(runner_number=-99).count()
-        context["hottags"] = rtqs.filter(runner_number=-99).count()
-        context["videos"] = Video.objects.filter(spectator__user=request.user).count()
+    rtqs = RunnerTag.objects.filter(video__spectator__user=request.user)
+    context["runnertags"] = rtqs.exclude(runner_number=-99).count()
+    context["hottags"] = rtqs.filter(runner_number=-99).count()
+    context["videos"] = Video.objects.filter(spectator__user=request.user).count()
     context["runner_search_form"] = RunnerSearchForm(None,request.user)
     return render(request, "home.html", context)
 
@@ -79,7 +65,8 @@ def customlogin(request):
     login_form = processlogin(request)
     if login_form:
         return render(request, "login.html", {
-            'login_form': login_form
+            'login_form': login_form,
+            'break_before_consent': True,
         })
     else:
         return HttpResponseRedirect(reverse('home'))
@@ -101,7 +88,7 @@ class RunnerTagList(ListView):
     def get_queryset(self):
         self.form = RunnerSearchForm(self.kwargs,self.request.user)
         if self.form.is_valid():
-            return RunnerTag.objects.select_related("video").filter(video__event=self.form.cleaned_data["event"],runner_number=self.form.cleaned_data["runner_number"]).order_by("time")
+            return RunnerTag.objects.select_related("video__spectator,video__event").filter(video__event=self.form.cleaned_data["event"],runner_number=self.form.cleaned_data["runner_number"]).order_by("time")
         else:
             return RunnerTag.objects.none()
         

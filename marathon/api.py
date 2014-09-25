@@ -60,7 +60,7 @@ class SpectatorResource(resources.ModelResource):
         return nested_resource.get_list(request)
     
     def hydrate(self, bundle):
-        if "user" not in bundle.data:
+        if ("user" not in bundle.data) and (not hasattr(bundle.obj, "user")):
             bundle.obj.user_id = bundle.data.get("user_id", bundle.request.user.id)
         return bundle
     
@@ -161,14 +161,15 @@ class VideoResource(resources.ModelResource):
         return nested_resource.get_detail(request, pk=obj.spectator_id)
     
     def hydrate(self, bundle):
-        if "spectator" not in bundle.data:
+        print "Hydrating"
+        if ("spectator" not in bundle.data) and (not hasattr(bundle.obj, "spectator")):
             if "spectator_id" in bundle.data:
                 bundle.obj.spectator_id = bundle.data["spectator_id"]
             elif "spectator_guid" in bundle.data:
                 bundle.obj.spectator = Spectator.objects.get(guid=bundle.data["spectator_guid"])
             else:
                 bundle.obj.spectator, created = Spectator.objects.get_or_create(user=bundle.request.user, defaults={"name":"Participant %d"%bundle.request.user.id})
-        if "event" not in bundle.data:
+        if ("event" not in bundle.data) and (not hasattr(bundle.obj, "event")):
             if "event_id" in bundle.data:
                 bundle.obj.event_id = bundle.data["event_id"]
             else:
@@ -222,7 +223,7 @@ class PositionUpdateResource(resources.ModelResource):
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
     
     def hydrate(self, bundle):
-        if "spectator" not in bundle.data:
+        if ("spectator" not in bundle.data) and (not hasattr(bundle.obj, "spectator")):
             if "spectator_id" in bundle.data:
                 bundle.obj.spectator_id = bundle.data["spectator_id"]
             elif "spectator_guid" in bundle.data:
@@ -307,7 +308,7 @@ class RunnerTagResource(resources.ModelResource):
         return nested_resource.get_detail(request, pk=obj.video.spectator_id)
     
     def hydrate(self, bundle):
-        if "video" not in bundle.data:
+        if ("video" not in bundle.data) and not (hasattr(bundle.obj, "video")):
             if "video_id" in bundle.data:
                 bundle.obj.video_id = bundle.data["video_id"]
             if "video_guid" in bundle.data:

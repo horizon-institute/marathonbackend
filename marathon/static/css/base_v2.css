@@ -18,8 +18,12 @@ body { font-size: 13px; }
     background-size: cover;
 }
 
-header, #top-content-wrapper, #bottom-content-wrapper {
+header, #top-content-wrapper, #bottom-content-wrapper, footer {
     max-width: 1000px; margin: 0 auto; padding: 0 1em;
+}
+
+#bottom-content-wrapper {
+    padding-top: 2em;
 }
 
 a {
@@ -64,15 +68,27 @@ h1 a:hover, h1 a:visited {
 }
 
 h2 {
-    font-size: 1em; font-weight: 400; margin: .5em 0 0;
+    font-size: 1em; font-weight: 700; margin: .8em 0 0;
 }
 
 h3 {
-    font-size: .9em; font-weight: 400; margin: .5em 0 0;
+    font-size: .9em; font-weight: 400; margin: .6em 0 0; line-height: 1.3em;
 }
 
 p {
-    font-size: .8em; margin: .2em 0;
+    font-size: .8em; margin: .3em 0;
+}
+
+.bullet-list {
+    font-size: .8em; padding-left: 1.5em;
+}
+
+.bullet-list.big-list {
+    font-size: .92em;
+}
+
+.bullet-list li {
+    list-style: disc; padding-left: .5em; margin: .4em 0; line-height: 1.3em;
 }
 
 input, textarea, select, button {
@@ -126,7 +142,7 @@ h1 img {
 }
 
 .two-columns {
-    display: table; width: 100%; margin: 2em 0;
+    display: table; width: 100%;
 }
 
 .two-columns .column {
@@ -146,15 +162,21 @@ h1 img {
     position: absolute; left: 0; top: 25%; bottom: 25%; border-left: 1px solid #e0e0e0;
 }
 
-@media (max-width: 420px) {
+@media (max-width: 460px) {
     .two-columns {
         display: block; margin: 0;
     }
     .two-columns .column {
-        display: block; width: 100%; margin: 2em 0;
+        display: block; width: 100%;
     }
     .column:last-child:before {
         display: none;
+    }
+    .column:first-child {
+        padding-right: 0;
+    }
+    .column:last-child {
+        padding-left: 0;
     }
 }
 
@@ -224,4 +246,12 @@ h1 img {
 
 #cancel-flagging {
     float: left;
+}
+
+footer {
+    margin: 1em auto; text-align: right; font-size: .8em;
+}
+
+footer li {
+    display: inline; margin-left: .8em;
 }

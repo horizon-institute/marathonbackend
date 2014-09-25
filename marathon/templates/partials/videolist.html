@@ -3,7 +3,10 @@
 <script>
     $(function() {
         $(".video-tagcount p").click(function() {
-            $(this).siblings("ul.video-tags").slideToggle();
+            var tags = $(this).siblings("ul.video-tags");
+            if (tags.children("li").length) {
+                tags.slideToggle();
+            }
         });
         $(".video-tag").click(function() {
             var $this = $(this), time = parseInt($this.attr("data-video-time")), videos = $this.parents(".video-item").find("video");
@@ -11,24 +14,108 @@
                 videos[0].currentTime = time;
             }
         });
+        
+        var endpoint = '{% url "api_dispatch_list" api_name="v1" resource_name="video" %}',
+            csrf_token = '{{csrf_token}}';
+            
+        $(".change-status").click(function() {
+            var videoElement = $(this).parents(".item"),
+                videoId = videoElement.attr("data-video-id"),
+                newStatus = !+videoElement.attr("data-is-public"),
+                data = JSON.stringify({
+                    "public": newStatus
+                });
+                videoElement.css("background","#ccccff");
+            $.ajax({
+                "type": "PUT",
+                "url": endpoint + videoId + "/",
+                "data": data,
+                "contentType":"application/json; charset=utf-8",
+                "success": function() {
+                    videoElement.attr("data-is-public", +newStatus);
+                    videoElement.find(".current-status").text(newStatus ? "Public" : "Private");
+                    videoElement.find(".change-status").text(newStatus ? "Make it private" : "Make it public");
+                    videoElement.css("background","#ccffcc");
+                    setTimeout(function() {
+                        videoElement.css("background","#ffffff");
+                    }, 2000);
+                },
+                "error": function() {
+                    videoElement.css("background","#ffcccc");
+                    setTimeout(function() {
+                        videoElement.css("background","#ffffff");
+                    }, 2000);
+                },
+                "headers": {
+                    "X-CSRFToken": csrf_token
+                }
+            });
+            return false;
+        });
+
+{% if user.is_superuser %}
+     
+        $("video").on("loadedmetadata", function() {
+            var videoElement = $(this).parents(".item"),
+                videoDuration = Math.round(this.duration),
+                delta = Math.abs(videoDuration - videoElement.attr("data-video-duration"));
+            if (delta > 1) {
+                $.ajax({
+                    "type": "PUT",
+                    "url": endpoint + videoElement.attr("data-video-id") + "/",
+                    "data": JSON.stringify({"duration": videoDuration}),
+                    "contentType":"application/json; charset=utf-8",
+                    "headers": {
+                        "X-CSRFToken": csrf_token
+                    },
+                    "success": function() {
+                        videoElement.find(".video-duration").text(videoDuration);
+                    }
+                });
+            }
+        });
+
+{% comment %}
+        $("#bottom-content-wrapper").prepend('<a href="#" id="create-video">CREATE VIDEO</a>');
+        $("#create-video").click(function() {
+            $.ajax({
+                "type": "POST",
+                "url": endpoint,
+                "data": JSON.stringify({
+                    "duration": 100,
+                }),
+                "contentType":"application/json; charset=utf-8",
+                "headers": {
+                    "X-CSRFToken": csrf_token
+                }
+            });
+            return false;
+        });
+{% endcomment %}
+
+{% endif %}
     });
 </script>
-<ul class="fullwidth-float">
+
+<ul class="item-list">
 {% for video in object_list %}
-    <li class="video-item">
+    <li class="item" data-video-id="{{video.id}}" data-is-public="{{video.public|yesno:"1,0"}}" data-video-duration="{{video.duration}}">
     {% if video.url %}
-        <video class="video-video" src="{{video.url}}" width="225" height="170" controls> </video>
+        <video class="item-video" src="{{video.url}}" controls> </video>
     {% else %}
-        <div class="video-video">
+        <div class="item-video">
             <p>Video not uploaded yet</p>
         </div>
     {% endif %}
         <ul class="video-metadata">
             <li>
+                Event: {{video.event.name}}
+            </li>
+            <li>
                 {{video.start_time|date:"D d/m/Y H:i"}}
             </li>
             <li>
-                Duration: {{video.duration}}s
+                Duration: <span class="video-duration">{{video.duration}}</span>s
             </li>
             <li class="video-tagcount">
                 <p>{{video.tagcount}} Tag{% if video.tagcount > 1 %}s{% endif %}</p>
@@ -38,6 +125,13 @@
                 {% endfor %}
                 </ul>
             </li>
+            <li>
+                Status:
+                <span class="current-status">{% if video.public %}Public{% else %}Private{% endif %}</span>
+            {% if video.spectator.user == user or user.is_superuser %}
+                <a class="change-status" href="#">Make it {% if video.public %}private{% else %}public{% endif %}</a>
+                </li>
+            {% endif %}
         </ul>
     </li>
 {% endfor %}

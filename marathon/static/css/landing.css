@@ -54,6 +54,10 @@
     text-align: center;
 }
 
+#landing-about-block .column {
+    padding: 2em 0;
+}
+
 .landing-about-icon {
     width: 6em; height: 6em; border: 1px solid #e0e0e0; margin: .5em auto; border-radius: 4em; position: relative;
     transition: background .5s;

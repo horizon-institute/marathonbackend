@@ -1,16 +1,22 @@
 {% if paginator.count %}
 {% include "partials/pagination.html" %}
-<ul class="result-items">
+<ul class="item-list">
 {% for runnertag in object_list %}
-    <li class="runnertag-item">
+    <li class="item">
+{% if user.is_superuser or runnertag.video.public or runnertag.video.spectator.user == user %}
     {% if runnertag.video.url %}
-        <video class="runnertag-video" src="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}" width="225" height="170" controls> </video>
+        <video class="item-video" src="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}" width="225" height="170" controls> </video>
     {% else %}
-        <div class="runnertag-video">
-            <p>Video not online</p>
+        <div class="item-video">
+            <p>Video not uploaded yet</p>
         </div>
     {% endif %}
-        <ul class="runnertag-metadata">
+{% else %}
+        <div class="item-video">
+            <p>Video is private</p>
+        </div>
+{% endif %}
+        <ul class="item-metadata">
         {% if not form %}
             <li>
                 Event: {{runnertag.video.event.name}}

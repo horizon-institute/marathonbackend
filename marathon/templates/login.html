@@ -8,8 +8,17 @@
 {% block title %}{{block.super}}: Sign in{% endblock %}
 {% block page_title %}<span class="page-title">Sign in</span>{% endblock %}
 
-{% block top_content %}
+{% block bottom_content %}
+
+<div class="two-columns">
+    <div class="column">
+        
+<h2>Research and Consent</h2>
+
+{% include "partials/consent-stuff.html" %}
 
 {% include "partials/login.html" %}
+    </div>
+</div>
 
 {% endblock %}

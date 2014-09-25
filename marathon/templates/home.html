@@ -12,7 +12,6 @@
 
 <div class="two-columns">
     
-{% if user.is_authenticated %}
     <div class="column">
         <h2>My activity:</h2>
         <p>You are connected as <strong>{{user.username}}</strong></p>
@@ -53,18 +52,10 @@
             <a href="{% url 'django.contrib.auth.views.logout'%}?next=/home/">Log out</a>
         </p>
     </div>
-{% endif %}
 
     <div class="column">
         {% include "partials/searchrunner_form.html" %}
     </div>
-
-{% if not user.is_authenticated %}
-    <div class="column">
-        <h2 class="home-signin">Sign in to experience more features!</h2>
-        {% include "partials/login.html" %}
-    </div>
-{% endif %}
 
 </div>
 {% endblock %}
