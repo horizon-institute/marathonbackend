@@ -14,7 +14,7 @@ body { font-size: 13px; }
 }
 
 #top-part {
-    color: #ffffff; background: #404040 url(../images/big-background.jpg) center; padding: 2em 0;
+    color: #ffffff; background: #404040 url(../images/big-background.jpg) center; padding: 1.2em 0;
     background-size: cover;
 }
 
@@ -142,7 +142,7 @@ h1 img {
 }
 
 .two-columns {
-    display: table; width: 100%;
+    display: table; width: 100%; clear: both;
 }
 
 .two-columns .column {
