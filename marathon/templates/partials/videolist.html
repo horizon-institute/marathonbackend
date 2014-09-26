@@ -111,6 +111,11 @@
             <li>
                 Event: {{video.event.name}}
             </li>
+            {% if user.is_superuser %}
+            <li>
+                Video by: {{video.spectator.user.username}}
+            </li>
+            {% endif %}
             <li>
                 {{video.start_time|date:"D d/m/Y H:i"}}
             </li>
@@ -121,7 +126,14 @@
                 <p>{{video.tagcount}} Tag{% if video.tagcount > 1 %}s{% endif %}</p>
                 <ul class="video-tags">
                 {% for tag in video.runnertags.all %}
-                    <li class="video-tag" data-video-time="{{tag.video_time}}">Runner {{tag.runner_number}} at {{tag.video_time}}s</li>
+                    <li class="video-tag" data-video-time="{{tag.video_time}}">
+                    {% if tag.is_hot_tag %}
+                    Hot tag
+                    {% else %}
+                    Runner {{tag.runner_number}}
+                    {% endif %}
+                    at {{tag.video_time}}s
+                    </li>
                 {% endfor %}
                 </ul>
             </li>
@@ -130,8 +142,8 @@
                 <span class="current-status">{% if video.public %}Public{% else %}Private{% endif %}</span>
             {% if video.spectator.user == user or user.is_superuser %}
                 <a class="change-status" href="#">Make it {% if video.public %}private{% else %}public{% endif %}</a>
-                </li>
             {% endif %}
+            </li>
         </ul>
     </li>
 {% endfor %}

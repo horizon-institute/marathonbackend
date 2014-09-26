@@ -21,6 +21,11 @@
             <li>
                 Event: {{runnertag.video.event.name}}
             </li>
+            {% if user.is_superuser %}
+            <li>
+                Video by: {{runnertag.video.spectator.user.username}}
+            </li>
+            {% endif %}
             <li>
                 {% if runnertag.is_hot_tag %}
                 &ldquo;hot&rdquo; tag
