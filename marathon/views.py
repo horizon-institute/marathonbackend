@@ -109,7 +109,7 @@ class MyVideoList(ListView):
 class AllVideosList(ListView):
     template_name = "allvideos.html"
     model = Video
-    paginate_by = 12
+    paginate_by = 8
     
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -149,7 +149,7 @@ class MyTagList(ListView):
 class AllTagsList(ListView):
     template_name = "alltags.html"
     model = RunnerTag
-    paginate_by = 12
+    paginate_by = 8
     
     def get_queryset(self):
         if self.request.user.is_superuser:

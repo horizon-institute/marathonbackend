@@ -12,8 +12,16 @@
     transition: background .5s;
 }
 
+.fullwidth-item {
+    display: block; width: auto;
+}
+
 .item-video {
     width: 100%; height: 170px; background: #808080; color: #ffffff;
+}
+
+.fullwidth-item .item-video {
+    height: auto; min-height: 170px; max-height: 500px;
 }
 
 .item-video p {

@@ -2,6 +2,39 @@
 {% include "partials/pagination.html" %}
 <script>
     $(function() {
+        
+        $(".item").dblclick(function() {
+            var $this = $(this);
+            $this.siblings().removeClass("fullwidth-item");
+            //$this.toggleClass("fullwidth-item");
+            var w = $("#bottom-content-wrapper").width() - 14;
+            if ($this.hasClass("fullwidth-item")) {
+                console.log("Shrinking to 225px");
+                $this.removeClass("fullwidth-item").css("width",w).animate({
+                    "width": "225px"
+                }, {
+                    duration: 500,
+                    complete: function() {
+                        $this.css("width","");
+                    }
+                });
+            } else {
+                console.log("Expanding to", w);
+                $this.animate({
+                    "width": w
+                }, {
+                    duration: 500,
+                    complete: function() {
+                        $this.addClass("fullwidth-item").css("width","");
+                        $("body").animate({
+                            scrollTop: $this.offset().top
+                        }, 500);
+                    }
+                });
+            }
+            
+        });
+        
         $(".video-tagcount p").click(function() {
             var tags = $(this).siblings("ul.video-tags");
             if (tags.children("li").length) {
@@ -59,7 +92,7 @@
             var videoElement = $(this).parents(".item"),
                 videoDuration = Math.round(this.duration),
                 delta = Math.abs(videoDuration - videoElement.attr("data-video-duration"));
-            if (delta > 1) {
+            if (delta > 1 && videoDuration > 0) {
                 $.ajax({
                     "type": "PUT",
                     "url": endpoint + videoElement.attr("data-video-id") + "/",
