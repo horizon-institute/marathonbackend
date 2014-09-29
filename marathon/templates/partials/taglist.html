@@ -1,11 +1,16 @@
 {% if paginator.count %}
 {% include "partials/pagination.html" %}
+<script src="{{STATIC_URL}}script/showvideo.js"></script>
 <ul class="item-list">
 {% for runnertag in object_list %}
-    <li class="item">
 {% if user.is_superuser or runnertag.video.public or runnertag.video.spectator.user == user %}
-    {% if runnertag.video.url %}
-        <video class="item-video" src="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}" width="225" height="170" controls> </video>
+    <li class="item"
+        data-video-online="{{runnertag.video.online|yesno:"1,0"}}"
+        data-video-url="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}">
+    {% if video.online %}
+        <div class="item-video">
+            <img src="{{MEDIA_URL}}{{runnertag.thumbnail}}" />
+        </div>
     {% else %}
         <div class="item-video">
             <p>Video not uploaded yet</p>

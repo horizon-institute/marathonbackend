@@ -21,7 +21,7 @@
 }
 
 .item-video img {
-    max-width: 100%; max-height: 100%;
+    max-width: 100%; max-height: 100%; cursor: pointer;
 }
 
 .fullwidth-item .item-video {
