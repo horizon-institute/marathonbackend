@@ -38,7 +38,7 @@ class Command(NoArgsCommand):
                 frametime = duration/2
                 
                 jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%v.guid)
-                cmdline = 'ffmpeg -i "%s" -y -vframes 1 -ss %d "%s"'%(mp4file, frametime, jpgfile)
+                cmdline = 'ffmpeg -ss %d -i "%s" -vframes 1 -y "%s"'%(frametime, mp4file, jpgfile)
                 subprocess.call(cmdline, shell=True)
                 
                 if os.path.isfile(jpgfile):
@@ -48,7 +48,7 @@ class Command(NoArgsCommand):
                 
                 for t in v.runnertags.all():
                     jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%t.guid)
-                    cmdline = 'ffmpeg -i "%s" -y -vframes 1 -ss %d "%s"'%(mp4file, t.video_time, jpgfile)
+                    cmdline = 'ffmpeg -ss %d -i "%s" -vframes 1 -y "%s"'%(t.video_time, mp4file, jpgfile)
                     subprocess.call(cmdline, shell=True)
                         
                     if os.path.isfile(jpgfile):

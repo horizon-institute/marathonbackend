@@ -98,47 +98,6 @@
             return false;
         });
 
-{% if user.is_superuser %}
-     
-        $("video").on("loadedmetadata", function() {
-            var videoElement = $(this).parents(".item"),
-                videoDuration = Math.round(this.duration),
-                delta = Math.abs(videoDuration - videoElement.attr("data-video-duration"));
-            if (delta > 1 && videoDuration > 0) {
-                $.ajax({
-                    "type": "PUT",
-                    "url": endpoint + videoElement.attr("data-video-id") + "/",
-                    "data": JSON.stringify({"duration": videoDuration}),
-                    "contentType":"application/json; charset=utf-8",
-                    "headers": {
-                        "X-CSRFToken": csrf_token
-                    },
-                    "success": function() {
-                        videoElement.find(".video-duration").text(videoDuration);
-                    }
-                });
-            }
-        });
-
-{% comment %}
-        $("#bottom-content-wrapper").prepend('<a href="#" id="create-video">CREATE VIDEO</a>');
-        $("#create-video").click(function() {
-            $.ajax({
-                "type": "POST",
-                "url": endpoint,
-                "data": JSON.stringify({
-                    "duration": 100,
-                }),
-                "contentType":"application/json; charset=utf-8",
-                "headers": {
-                    "X-CSRFToken": csrf_token
-                }
-            });
-            return false;
-        });
-{% endcomment %}
-
-{% endif %}
     });
 </script>
 
