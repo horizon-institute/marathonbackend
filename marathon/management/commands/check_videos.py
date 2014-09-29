@@ -24,7 +24,9 @@ class Command(NoArgsCommand):
                 mp4output.write(mp4data.read())
                 mp4output.close()
                 
-                probelines = subprocess.check_output('ffprobe -i "%s" -show_format'%mp4file)
+                
+                cmdline = 'ffprobe "%s" -show_format'%mp4file
+                probelines = subprocess.check_output(cmdline, shell=True)
                 durlines = [l for l in re.split("[\n\r]+",probelines) if l[:9] == "duration="]
                 if durlines:
                     duration = int(round(float(durlines[0][9:])))
@@ -36,7 +38,8 @@ class Command(NoArgsCommand):
                 frametime = duration/2
                 
                 jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%v.guid)
-                subprocess.call('ffmpeg -i "%s" -y -vframes 1 -ss %d "%s"'%(mp4file, frametime, jpgfile))
+                cmdline = 'ffmpeg -i "%s" -y -vframes 1 -ss %d "%s"'%(mp4file, frametime, jpgfile)
+                subprocess.call(cmdline, shell=True)
                 
                 if os.path.isfile(jpgfile):
                     v.thumbnail = "%s.jpg"%v.guid
@@ -45,8 +48,8 @@ class Command(NoArgsCommand):
                 
                 for t in v.runnertags.all():
                     jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%t.guid)
-                    
-                    subprocess.call('ffmpeg -i "%s" -y -vframes 1 -ss %d "%s"'%(mp4file, t.video_time, jpgfile))
+                    cmdline = 'ffmpeg -i "%s" -y -vframes 1 -ss %d "%s"'%(mp4file, t.video_time, jpgfile)
+                    subprocess.call(cmdline, shell=True)
                         
                     if os.path.isfile(jpgfile):
                         t.thumbnail = "%s.jpg"%t.guid
