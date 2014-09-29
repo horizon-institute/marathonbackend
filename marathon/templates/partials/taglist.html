@@ -6,7 +6,8 @@
 {% if user.is_superuser or runnertag.video.public or runnertag.video.spectator.user == user %}
     <li class="item"
         data-video-online="{{runnertag.video.online|yesno:"1,0"}}"
-        data-video-url="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}">
+        data-video-url="{{runnertag.video.url}}"
+        data-tag-time="{{runnertag.video_time}}">
     {% if runnertag.video.online %}
         <div class="item-video">
             <img src="{{MEDIA_URL}}{{runnertag.thumbnail}}" />
@@ -87,6 +88,10 @@
             content_id = btn.attr("data-content-id");
             lbx.show();
             return false;
+        });
+        $(".item").on("video", "metadataloaded", function() {
+            console.log(this);
+            this.currentTime = Math.max(0,Math.min(this.duration, $(this),parents(".item").attr("data-tag-time"))-3);
         });
         function backToResults() {
             content_type = null;
