@@ -3,13 +3,12 @@
 <script>
     $(function() {
         
-        $(".item").dblclick(function() {
-            var $this = $(this);
+        function showItem(item) {
+            var $this = $(item);
             $this.siblings().removeClass("fullwidth-item");
             //$this.toggleClass("fullwidth-item");
             var w = $("#bottom-content-wrapper").width() - 14;
             if ($this.hasClass("fullwidth-item")) {
-                console.log("Shrinking to 225px");
                 $this.removeClass("fullwidth-item").css("width",w).animate({
                     "width": "225px"
                 }, {
@@ -19,20 +18,33 @@
                     }
                 });
             } else {
-                console.log("Expanding to", w);
                 $this.animate({
                     "width": w
                 }, {
                     duration: 500,
                     complete: function() {
                         $this.addClass("fullwidth-item").css("width","");
+                        if (!$this.find("video").length && !!+$this.attr("data-video-online")) {
+                            $this.find(".item-video").append(
+                                '<video src="'
+                                + $this.attr("data-video-url")
+                                + '" controls></video>'
+                            );
+                        }
+                        
                         $("body").animate({
                             scrollTop: $this.offset().top
                         }, 500);
                     }
                 });
             }
-            
+        }
+        
+        $(".item").dblclick(function() {
+            showItem(this);
+        });
+        $(".item-video img").click(function() {
+            showItem(this.parentNode.parentNode);
         });
         
         $(".video-tagcount p").click(function() {
@@ -132,9 +144,16 @@
 
 <ul class="item-list">
 {% for video in object_list %}
-    <li class="item" data-video-id="{{video.id}}" data-is-public="{{video.public|yesno:"1,0"}}" data-video-duration="{{video.duration}}">
-    {% if video.url %}
-        <video class="item-video" src="{{video.url}}" controls> </video>
+    <li class="item"
+        data-video-id="{{video.id}}"
+        data-is-public="{{video.public|yesno:"1,0"}}"
+        data-video-duration="{{video.duration}}"
+        data-video-online="{{video.online|yesno:"1,0"}}"
+        data-video-url="{{video.url}}">
+    {% if video.online %}
+        <div class="item-video">
+            <img src="{{MEDIA_URL}}{{video.thumbnail}}" />
+        </div>
     {% else %}
         <div class="item-video">
             <p>Video not uploaded yet</p>

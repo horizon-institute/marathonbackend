@@ -64,9 +64,10 @@ class Video(GUIDModel):
     spectator = models.ForeignKey(Spectator, related_name="videos", db_index=True, null=False, blank=False)
     start_time = models.DateTimeField(db_index=True, null=False, blank=False, default=datetime.datetime.now)
     duration = models.IntegerField(db_index=True, null=False, blank=False, default=0)
-    url = models.CharField(max_length=300)
+    url = models.CharField(max_length=300, default="", db_index=True)
     online = models.BooleanField(db_index=True, default=False)
     public = models.BooleanField(db_index=True, default=False)
+    thumbnail = models.CharField(max_length=300, default="")
     
     @property
     def end_time(self):
@@ -83,6 +84,7 @@ class RunnerTag(GUIDModel):
     longitude = models.FloatField(null=False, blank=False, db_index=True)
     accuracy = models.FloatField(null=False, blank=False, db_index=True)
     public = models.BooleanField(db_index=True, default=False)
+    thumbnail = models.CharField(max_length=300, default="")
     
     @property
     def video_time(self):
