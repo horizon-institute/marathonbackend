@@ -7,7 +7,7 @@
     <li class="item"
         data-video-online="{{runnertag.video.online|yesno:"1,0"}}"
         data-video-url="{{runnertag.video.url}}#t={{runnertag.video_time|add:"-5"}}">
-    {% if video.online %}
+    {% if runnertag.video.online %}
         <div class="item-video">
             <img src="{{MEDIA_URL}}{{runnertag.thumbnail}}" />
         </div>
