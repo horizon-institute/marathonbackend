@@ -33,7 +33,7 @@ $(function() {
                                 this.currentTime = Math.max(0,Math.min(this.duration, tagtime)-3);
                             });
                         }
-                        $v.attr("src", $this.attr("data-video-url")).prop("controls",true);
+                        $v.attr("src", $this.attr("data-video-url")).prop("controls",true).appendTo($this.find(".item-video"));
                     }
                     
                     $("body").animate({
