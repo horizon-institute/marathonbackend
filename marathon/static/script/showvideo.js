@@ -25,11 +25,15 @@ $(function() {
                 complete: function() {
                     $this.addClass("fullwidth-item").css("width","");
                     if (!$this.find("video").length && !!+$this.attr("data-video-online")) {
-                        $this.find(".item-video").append(
-                            '<video src="'
-                            + $this.attr("data-video-url")
-                            + '" controls></video>'
-                        );
+                        var $v = $("<video>"),
+                            tagtime = $this.attr("data-tag-time");
+                        if (tagtime) {
+                            $v.on("loadedmetadata", function() {
+                                console.log(this);
+                                this.currentTime = Math.max(0,Math.min(this.duration, tagtime)-3);
+                            });
+                        }
+                        $v.attr("src", $this.attr("data-video-url")).prop("controls",true);
                     }
                     
                     $("body").animate({
