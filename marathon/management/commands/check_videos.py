@@ -48,12 +48,14 @@ class Command(NoArgsCommand):
                 
                 for t in v.runnertags.all():
                     jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%t.guid)
-                    cmdline = 'ffmpeg -ss %d -i "%s" -vframes 1 -y "%s"'%(t.video_time, mp4file, jpgfile)
+                    cmdline = 'ffmpeg -s 480x360 -ss %d -i "%s" -vframes 1 -y "%s"'%(t.video_time, mp4file, jpgfile)
                     subprocess.call(cmdline, shell=True)
                         
                     if os.path.isfile(jpgfile):
                         t.thumbnail = "%s.jpg"%t.guid
                         t.save()
+                
+                os.remove(mp4file)
                 
             except urllib2.URLError:
                 print "MP4 file not online"
