@@ -48,7 +48,7 @@ class Command(NoArgsCommand):
                 
                 for t in v.runnertags.all():
                     jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%t.guid)
-                    cmdline = 'ffmpeg -s 480x360 -ss %d -i "%s" -vframes 1 -y "%s"'%(t.video_time, mp4file, jpgfile)
+                    cmdline = 'ffmpeg -vf scale=225:-1 -ss %d -i "%s" -vframes 1 -y "%s"'%(t.video_time, mp4file, jpgfile)
                     subprocess.call(cmdline, shell=True)
                         
                     if os.path.isfile(jpgfile):
