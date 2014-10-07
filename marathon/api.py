@@ -136,6 +136,8 @@ class VideoResource(resources.ModelResource):
     event_name = fields.CharField(attribute='event__name', readonly=True)
     event_id = fields.CharField(attribute='event_id', readonly=True)
     end_time = fields.DateTimeField(attribute='end_time', readonly=True)
+    server_created_date = fields.DateTimeField(attribute='server_created_date', readonly=True)
+    server_updated_date = fields.DateTimeField(attribute='server_updated_date', readonly=True)
     
     def prepend_urls(self):
         return [
@@ -221,6 +223,8 @@ class PositionUpdateResource(resources.ModelResource):
     spectator = fields.ToOneField(SpectatorResource, 'spectator')
     spectator_guid = fields.CharField(attribute='spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
+    server_created_date = fields.DateTimeField(attribute='server_created_date', readonly=True)
+    server_updated_date = fields.DateTimeField(attribute='server_updated_date', readonly=True)
     
     def hydrate(self, bundle):
         if ("spectator" not in bundle.data) and (not hasattr(bundle.obj, "spectator")):
@@ -285,6 +289,8 @@ class RunnerTagResource(resources.ModelResource):
     spectator_guid = fields.CharField(attribute='video__spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='video__spectator__name', readonly=True)
     is_hot_tag = fields.BooleanField(attribute='is_hot_tag', readonly=True)
+    server_created_date = fields.DateTimeField(attribute='server_created_date', readonly=True)
+    server_updated_date = fields.DateTimeField(attribute='server_updated_date', readonly=True)
     
     def prepend_urls(self):
         return [

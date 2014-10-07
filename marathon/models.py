@@ -7,6 +7,8 @@ import datetime
 
 class GUIDModel(models.Model):
     guid = models.CharField(max_length=100, unique=True)
+    server_created_date = models.DateTimeField(db_index=True, null=False, blank=False, default=datetime.datetime.now)
+    server_updated_date = models.DateTimeField(db_index=True, null=False, blank=False, default=datetime.datetime.now)
     
     class Meta:
         abstract = True
@@ -14,6 +16,7 @@ class GUIDModel(models.Model):
     def save(self, *args, **kwargs):
         if not self.guid:
             self.guid = str(uuid.uuid4())
+        self.server_updated_date = datetime.datetime.now()
         super(GUIDModel, self).save(*args, **kwargs)
     
     def __unicode__(self):

@@ -38,7 +38,7 @@ class ContactRegistrationForm(forms.ModelForm):
     class Meta:
         model = ContactRegistration
         fields = ['email']
-        widgets = {'email': forms.EmailInput(attrs={'placeholder': 'Your email address'})}
+        widgets = {'email': forms.EmailInput(attrs={'placeholder': 'Enter your email address to know more'})}
 
 class RunnerSearchForm(forms.Form):
     event = forms.ModelChoiceField(queryset = Event.objects.filter(public=True), initial=Event.objects.get(is_current=True), required=True, error_messages={'required': 'Please choose an event'})
