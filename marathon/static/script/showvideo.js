@@ -50,4 +50,13 @@ $(function() {
     $(".item-video img").click(function() {
         showItem(this.parentNode.parentNode);
     });
+    
+    $(".video-tag").click(function() {
+        var $this = $(this),
+            time = parseInt($this.attr("data-video-time")),
+            videos = $this.parents(".item").find("video");
+        if (videos.length) {
+            videos[0].currentTime = time;
+        }
+    });
 });

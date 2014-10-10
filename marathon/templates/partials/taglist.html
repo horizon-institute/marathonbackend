@@ -1,3 +1,4 @@
+{% load marathontags %}
 {% if paginator.count %}
 {% include "partials/pagination.html" %}
 <script src="{{STATIC_URL}}script/showvideo.js"></script>
@@ -43,8 +44,8 @@
             <li>
                 {{runnertag.time|date:"D d/m/Y H:i"}}
             </li>
-            <li>
-                Tag at {{runnertag.video_time}}s in the video
+            <li class="video-tag" data-video-time="{{runnertag.video_time}}">
+                Tag at {{runnertag.video_time|minsecs}} in the video
             </li>
             <li>
                 <img src="http://maps.googleapis.com/maps/api/staticmap?size=225x80&zoom=14&markers=label:{{forloop.counter}}%7C{{runnertag.latitude}},{{runnertag.longitude}}&key={{GMAPS_API_KEY}}"></td>

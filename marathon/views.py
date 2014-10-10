@@ -83,7 +83,7 @@ def searchrunner(request):
 class RunnerTagList(ListView):
     template_name = "searchrunner.html"
     model = RunnerTag
-    paginate_by = 8
+    paginate_by = 12
     
     def get_queryset(self):
         self.form = RunnerSearchForm(self.kwargs,self.request.user)
@@ -101,7 +101,7 @@ class RunnerTagList(ListView):
 class MyVideoList(ListView):
     template_name = "myvideos.html"
     model = Video
-    paginate_by = 8
+    paginate_by = 12
     
     def get_queryset(self):
         return Video.objects.filter(spectator__user=self.request.user).select_related('tags').annotate(tagcount=Count("runnertags")).order_by("-start_time")
@@ -109,7 +109,7 @@ class MyVideoList(ListView):
 class AllVideosList(ListView):
     template_name = "allvideos.html"
     model = Video
-    paginate_by = 8
+    paginate_by = 12
     
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -120,7 +120,7 @@ class AllVideosList(ListView):
 class MyTagList(ListView):
     template_name = "mytags.html"
     model = RunnerTag
-    paginate_by = 8
+    paginate_by = 12
     tagtype = None
     
     def get_queryset(self):
@@ -149,7 +149,7 @@ class MyTagList(ListView):
 class AllTagsList(ListView):
     template_name = "alltags.html"
     model = RunnerTag
-    paginate_by = 8
+    paginate_by = 12
     
     def get_queryset(self):
         if self.request.user.is_superuser:

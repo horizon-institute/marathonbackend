@@ -38,7 +38,7 @@ class Command(NoArgsCommand):
                 frametime = duration/2
                 
                 jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%v.guid)
-                cmdline = 'ffmpeg -ss %d -i "%s" -vframes 1 -y "%s"'%(frametime, mp4file, jpgfile)
+                cmdline = 'ffmpeg -vf scale=225:-1 -ss %d -i "%s" -vframes 1 -y "%s"'%(frametime, mp4file, jpgfile)
                 subprocess.call(cmdline, shell=True)
                 
                 if os.path.isfile(jpgfile):

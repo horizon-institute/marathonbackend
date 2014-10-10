@@ -1,3 +1,4 @@
+{% load marathontags %}
 {% if paginator.count %}
 {% include "partials/pagination.html" %}
 <script src="{{STATIC_URL}}script/showvideo.js"></script>
@@ -8,12 +9,6 @@
             var tags = $(this).siblings("ul.video-tags");
             if (tags.children("li").length) {
                 tags.slideToggle();
-            }
-        });
-        $(".video-tag").click(function() {
-            var $this = $(this), time = parseInt($this.attr("data-video-time")), videos = $this.parents(".video-item").find("video");
-            if (videos.length) {
-                videos[0].currentTime = time;
             }
         });
         
@@ -87,7 +82,7 @@
                 {{video.start_time|date:"D d/m/Y H:i"}}
             </li>
             <li>
-                Duration: <span class="video-duration">{{video.duration}}</span>s
+                Duration: <span class="video-duration">{{video.duration|minsecs}}</span>
             </li>
             <li class="video-tagcount">
                 <p>{{video.tagcount}} Tag{% if video.tagcount > 1 %}s{% endif %}</p>
@@ -99,7 +94,7 @@
                     {% else %}
                     Runner {{tag.runner_number}}
                     {% endif %}
-                    at {{tag.video_time}}s
+                    at {{tag.video_time|minsecs}}
                     </li>
                 {% endfor %}
                 </ul>
