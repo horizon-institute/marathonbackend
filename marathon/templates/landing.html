@@ -5,31 +5,6 @@
         <link rel="stylesheet" type="text/css" href="{% static "css/landing.css" %}" />
 {% endblock %}
 
-{% block top_content %}
-
-<div id="landing-form-wrapper">
-{% if form.is_valid %}
-<h3>Thanks, we'll send you an email at <strong>{{email}}</strong> when RunSpotRun is online!</h3>
-{% endif %}
-{% if showform %}
-<form action="" method="post" id="landing-form">
-    {% if form.email.errors %}
-        {{ form.email.errors }}
-    {% endif %}
-    <div id="landing-email-wrapper">
-        {{ form.email }}
-        <img id="landing-email-image" src="{% static 'images/mail.png' %}">
-    </div>
-    <div id="landing-submit-wrapper">
-        <input id="landing-submit" type="submit" value="Register">
-    </div>
-{% csrf_token %}
-    
-</form>
-{% endif %}
-</div>
-
-{% endblock %}
 {% block bottom_content %}
 
 <a href="https://play.google.com/store/apps/details?id=uk.ac.horizon.runspotrun"

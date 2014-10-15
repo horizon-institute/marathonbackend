@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'marathonbackend.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', landing, name='landing'),
+    url(r'^$', TemplateView.as_view(template_name='landing.html'), name='landing'),
     url(r'^search-runner/', login_required(searchrunner), name='search_runner'),
     url(r'^videos/', login_required(MyVideoList.as_view()), name='my_video_list'),
     url(r'^admin/videos/', login_required(AllVideosList.as_view()), name='all_videos'),

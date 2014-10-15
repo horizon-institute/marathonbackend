@@ -19,7 +19,7 @@ body { font-size: 13px; }
 }
 
 header, #top-content-wrapper, #bottom-content-wrapper, footer {
-    max-width: 1000px; margin: 0 auto; padding: 0 1em;
+    max-width: 1000px; margin: 0 auto; padding: 0 1em; clear: both;
 }
 
 #bottom-content-wrapper {
@@ -124,7 +124,7 @@ h1 img {
 }
 
 .get-app-container {
-    float: right; height: 2.6875em;
+    float: right; height: 3.75em;
 }
 
 @media (max-width:380px) {
