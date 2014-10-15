@@ -4,6 +4,7 @@ from marathon.models import Video
 from django.core.management.base import NoArgsCommand
 from django.conf import settings
 import subprocess
+import datetime
 import os
 import urllib2
 import re
@@ -20,6 +21,11 @@ class Command(NoArgsCommand):
             try:
                 mp4file = os.path.join(settings.MEDIA_ROOT,"%s.mp4"%v.guid)
                 mp4data = urllib2.urlopen(v.url)
+                
+                headers = mp4data.info()
+                if "Last-modified" in headers:
+                    v.server_last_modified = datetime.datetime.strptime(headers["Last-modified"],"%a, %d %b %Y %H:%M:%S %Z")
+                                    
                 mp4output = open(mp4file,"wb")
                 mp4output.write(mp4data.read())
                 mp4output.close()

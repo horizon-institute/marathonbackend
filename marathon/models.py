@@ -71,6 +71,7 @@ class Video(GUIDModel):
     online = models.BooleanField(db_index=True, default=False)
     public = models.BooleanField(db_index=True, default=False)
     thumbnail = models.CharField(max_length=300, default="")
+    server_last_modified = models.DateTimeField(db_index=True, null=True, blank=True, default=None)
     
     @property
     def end_time(self):
