@@ -21,7 +21,7 @@
 }
 
 .item-video img {
-    max-width: 100%; cursor: pointer;
+    max-width: 100%; cursor: pointer; display: block; margin: 0 auto;
 }
 
 .fullwidth-item .item-video {
