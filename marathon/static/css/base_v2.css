@@ -5,11 +5,11 @@ body {
     font-weight: 300;
 }
 
-@media (max-width:500px) {
+@media (max-width:600px) {
 body { font-size: 14px; }
 }
 
-@media (max-width:380px) {
+@media (max-width:420px) {
 body { font-size: 13px; }
 }
 
@@ -43,7 +43,7 @@ em {
 }
 
 h1 {
-    font-size: 2.2em;
+    font-size: 2.25em; line-height: 1.5em;
 }
 
 h1 a:hover, h1 a:visited {
@@ -55,7 +55,7 @@ h1 a:hover, h1 a:visited {
 }
 
 .page-title {
-    font-size: .5em; font-weight: 200;
+    font-size: .5em; font-weight: 200; line-height: 1em;
 }
 
 @media (max-width: 640px) {
