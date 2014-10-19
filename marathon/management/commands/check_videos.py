@@ -66,4 +66,7 @@ class Command(NoArgsCommand):
             except urllib2.URLError:
                 print "MP4 file not online"
             
+            except Exception, e:
+                print e
+            
         
