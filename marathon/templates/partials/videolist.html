@@ -62,7 +62,7 @@
         data-video-url="{{video.url}}">
     {% if video.online %}
         <div class="item-video">
-            <img src="{{MEDIA_URL}}{{video.thumbnail}}" />
+            <img src="{% if video.thumbnail %}{{MEDIA_URL}}{{video.thumbnail}}{%else%}{{STATIC_URL}}images/no-thumbnail.png{% endif %}" />
         </div>
     {% else %}
         <div class="item-video">
