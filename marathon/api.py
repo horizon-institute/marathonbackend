@@ -8,6 +8,53 @@ from django.conf.urls import url
 from django.db.models import Q
 import datetime
 from django.core.urlresolvers import reverse
+import logging
+
+logger = logging.getLogger(__name__)
+
+def api_detail_auth_logger(detailfunc):
+    def loggedfunc(self, object_list, bundle):
+        request = bundle.request
+        is_authorised = detailfunc(self, object_list, bundle)
+        logstr = "Request authorised=%r, Username=%s, Superuser=%r"%(
+                                                          is_authorised,
+                                                          request.user.username,
+                                                          request.user.is_superuser)
+        if hasattr(bundle, "obj"):
+            logstr += " %s id=%r"%(bundle.obj.__class__.__name__, getattr(bundle.obj,"id",None))
+        logger.debug(logstr)
+        return is_authorised
+    return loggedfunc
+    
+class LoggedMultiAuthentication(MultiAuthentication):
+
+    def __init__(self, *backends, **kwargs):
+        backendz = [ SessionAuthentication(), OAuth20Authentication(), ApiKeyAuthentication() ]
+        for b in backends:
+            backendz.append(b)
+        super(LoggedMultiAuthentication, self).__init__(*backendz, **kwargs)
+    
+    def is_authenticated(self, request, **kwargs):
+        result = super(LoggedMultiAuthentication, self).is_authenticated(request, **kwargs)
+        logger.debug("Request authenticated=%r"%(result is True))
+        return result
+
+# Found on https://gist.github.com/vmihailenco/2382901
+class LoggedMixin(object):
+    
+    def dispatch(self, request_type, request, **kwargs):
+
+        logger.debug('%s %s %s' % (request.method, request.get_full_path(), request.body))
+        try:
+            response = super(LoggedMixin, self).dispatch(request_type, request, **kwargs)
+        except Exception, e:
+            if hasattr(e, 'response'):
+                logger.debug('Response %s' %(e.response.status_code, e.response))
+            else:
+                logger.debug('Other error')
+            raise
+        logger.debug('Response %s' % (response.status_code))
+        return response
 
 class SpectatorAuthorization(Authorization):
     
@@ -17,21 +64,25 @@ class SpectatorAuthorization(Authorization):
             return object_list
         return object_list.filter(user_id=current_user.id)
 
+    @api_detail_auth_logger
     def read_detail(self, object_list, bundle):
         if bundle.request.method == "GET" and bundle.obj.user is None:
             return True
         return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def create_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def update_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def delete_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.user == bundle.request.user)
 
-class SpectatorResource(resources.ModelResource):
+class SpectatorResource(LoggedMixin, resources.ModelResource):
     last_position = fields.ToOneField('marathon.api.PositionUpdateResource', 'last_position', related_name='last_position', null=True, full=True, readonly=True)
 
     def prepend_urls(self):
@@ -69,7 +120,7 @@ class SpectatorResource(resources.ModelResource):
         resource_name = 'spectator'
         fields = ['id', 'guid', 'name']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authentication = LoggedMultiAuthentication()
         authorization = SpectatorAuthorization()
         filtering = {
              "id": ("exact",),
@@ -84,16 +135,17 @@ class EventAuthorization(Authorization):
             return object_list
         return object_list.filter(public=True)
 
+    @api_detail_auth_logger
     def read_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser or bundle.obj.public)
 
-class EventResource(resources.ModelResource):
+class EventResource(LoggedMixin, resources.ModelResource):
     class Meta:
         queryset = Event.objects.all()
         resource_name = 'event'
         fields = ['id', 'name', 'date', 'public', 'is_current']
         allowed_methods = ['get']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authentication = LoggedMultiAuthentication()
         authorization = EventAuthorization()
         filtering = {
              "id": ("exact",),
@@ -110,7 +162,8 @@ class VideoAuthorization(Authorization):
         if current_user.is_superuser:
             return object_list
         return object_list.filter(Q(spectator__user_id=current_user.id) | (Q(public=True) & Q(event__public=True)))
-
+    
+    @api_detail_auth_logger
     def read_detail(self, object_list, bundle):
         current_video = bundle.obj
         current_user = bundle.request.user
@@ -120,16 +173,19 @@ class VideoAuthorization(Authorization):
             return True
         return ((current_video.spectator.user == current_user) or (current_video.public and current_video.event.public))
     
+    @api_detail_auth_logger
     def create_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def update_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def delete_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
 
-class VideoResource(resources.ModelResource):
+class VideoResource(LoggedMixin, resources.ModelResource):
     spectator = fields.ToOneField(SpectatorResource, 'spectator')
     spectator_guid = fields.CharField(attribute='spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
@@ -163,7 +219,6 @@ class VideoResource(resources.ModelResource):
         return nested_resource.get_detail(request, pk=obj.spectator_id)
     
     def hydrate(self, bundle):
-        print "Hydrating"
         if ("spectator" not in bundle.data) and (not hasattr(bundle.obj, "spectator")):
             if "spectator_id" in bundle.data:
                 bundle.obj.spectator_id = bundle.data["spectator_id"]
@@ -183,7 +238,7 @@ class VideoResource(resources.ModelResource):
         resource_name = 'video'
         fields = ['id', 'guid', 'start_time', 'duration', 'public', 'url']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authentication = LoggedMultiAuthentication()
         authorization = VideoAuthorization()
         filtering = {
              "id": ("exact",),
@@ -203,6 +258,7 @@ class PositionUpdateAuthorization(Authorization):
             return object_list
         return object_list.filter(spectator__user_id=current_user.id)
 
+    @api_detail_auth_logger
     def read_detail(self, object_list, bundle):
         if bundle.request.method == "GET" and not hasattr(bundle.obj, "spectator"): #This would be a schema documentation request
             return True
@@ -210,16 +266,19 @@ class PositionUpdateAuthorization(Authorization):
             return True
         return (bundle.obj.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def create_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def update_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def delete_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.spectator.user == bundle.request.user)
     
-class PositionUpdateResource(resources.ModelResource):
+class PositionUpdateResource(LoggedMixin, resources.ModelResource):
     spectator = fields.ToOneField(SpectatorResource, 'spectator')
     spectator_guid = fields.CharField(attribute='spectator__guid', readonly=True)
     spectator_name = fields.CharField(attribute='spectator__name', readonly=True)
@@ -241,7 +300,7 @@ class PositionUpdateResource(resources.ModelResource):
         resource_name = 'positionupdate'
         fields = ['id', 'guid', 'time', 'latitude', 'longitude', 'accuracy']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authentication = LoggedMultiAuthentication()
         authorization = PositionUpdateAuthorization()
         filtering = {
              "id": ("exact",),
@@ -262,6 +321,7 @@ class RunnerTagAuthorization(Authorization):
             return object_list
         return object_list.filter(Q(video__spectator__user_id=current_user.id) | (Q(public=True) & Q(video__public=True) & Q(video__event__public=True)))
 
+    @api_detail_auth_logger
     def read_detail(self, object_list, bundle):
         current_user = bundle.request.user
         if bundle.request.method == "GET" and not hasattr(bundle.obj, "video"): #This would be a schema documentation request
@@ -271,16 +331,19 @@ class RunnerTagAuthorization(Authorization):
             return ((current_video.spectator.user == current_user) or (bundle.obj.public and current_video.public and current_video.event.public))
         return True
 
+    @api_detail_auth_logger
     def create_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.video.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def update_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.video.spectator.user == bundle.request.user)
     
+    @api_detail_auth_logger
     def delete_detail(self, object_list, bundle):
         return (bundle.request.user.is_superuser) or (bundle.obj.video.spectator.user == bundle.request.user)
 
-class RunnerTagResource(resources.ModelResource):
+class RunnerTagResource(LoggedMixin, resources.ModelResource):
     video = fields.ToOneField(VideoResource, 'video')
     video_guid = fields.CharField(attribute='video__guid', readonly=True)
     video_time = fields.IntegerField(attribute='video_time', readonly=True)
@@ -326,7 +389,7 @@ class RunnerTagResource(resources.ModelResource):
         resource_name = 'runnertag'
         fields = ['id', 'guid', 'runner_number', 'latitude', 'longitude', 'accuracy', 'time', 'video_id', 'public']
         allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication())
+        authentication = LoggedMultiAuthentication()
         authorization = RunnerTagAuthorization()
         filtering = {
              "id": ("exact",),
@@ -355,7 +418,7 @@ class ActivityWrapper(object):
                 setattr(self,a,getattr(item,a,None))
 
 
-class Activity(resources.Resource):
+class Activity(LoggedMixin, resources.Resource):
     
     guid = fields.CharField(attribute='guid', null=True)
     spectator_name = fields.CharField(attribute='spectator_name', null=True)
@@ -423,6 +486,7 @@ class FlaggedContentAuthorization(Authorization):
         else:
             return None
 
+    @api_detail_auth_logger
     def read_detail(self, object_list, bundle):
         if bundle.request.user.is_authenticated:
             if bundle.request.user.is_superuser:
@@ -440,7 +504,7 @@ class AnonymousAuthentication(BasicAuthentication):
         else:
             return super(AnonymousAuthentication, self).is_authenticated(request, **kwargs)
 
-class FlaggedContentResource(resources.ModelResource):
+class FlaggedContentResource(LoggedMixin, resources.ModelResource):
     
     video = fields.ToOneField(VideoResource, attribute='video_content', null=True, full=True, readonly=True)
     positionupdate = fields.ToOneField(PositionUpdateResource, attribute='positionupdate_content', null=True, full=True, readonly=True)
@@ -452,12 +516,11 @@ class FlaggedContentResource(resources.ModelResource):
         resource_name = 'flaggedcontent'
         fields = ['id', 'flag_date', 'content_type', 'content_id', 'reason' ]
         allowed_methods = ['get', 'post']
-        authentication = MultiAuthentication(OAuth20Authentication(), SessionAuthentication(), ApiKeyAuthentication(), AnonymousAuthentication())
+        authentication = LoggedMultiAuthentication(AnonymousAuthentication())
         authorization = FlaggedContentAuthorization()
         ordering = ["flag_date"]
     
     def hydrate(self, bundle):
-        print bundle.request.user, bundle.request.user.is_anonymous
         if bundle.request.user.is_anonymous():
             bundle.obj.user = None
         else:

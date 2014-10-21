@@ -50,7 +50,7 @@ class Command(BaseCommand):
             event = Event.objects.get(id=options["event_id"])
         
         sqs = Spectator.objects.filter(videos__event=event).distinct()
-        tqs = RunnerTag.objects.filter(video__event=event)
+        tqs = RunnerTag.objects.filter(video__event=event).exclude(runner_number=-99)
         vqs = Video.objects.filter(event=event)
         
         videos_list = []
@@ -58,8 +58,9 @@ class Command(BaseCommand):
         for v in vqs:
             video_obj = {
                      "_id": v.guid,
-                     "start-time": v.start_time.strftime("%s"),
+                     #"start-time": v.start_time.strftime("%s"),
                      "start-time-iso": v.start_time.isoformat(),
+                     "spectator": v.spectator.guid,
                      "duration": v.duration,
                          }
             locobj = None
@@ -74,7 +75,7 @@ class Command(BaseCommand):
                                  spectator=v.spectator,
                                  )
                     if puqs.exists():
-                        locobj = puqs.first()
+                        locobj = puqs.order_by("-time").first()
                         print "Used a timespan of %d seconds around Video"%delta
                         break
             if locobj is None:
@@ -99,8 +100,10 @@ class Command(BaseCommand):
                         "runner_number": t.runner_number,
                         "latitude": t.latitude,
                         "longitude": t.longitude,
-                        "time": t.time.strftime("%s"),
+                        #"time": t.time.strftime("%s"),
                         "time-iso": t.time.isoformat(),
+                        "spectator": t.video.spectator.guid,
+                        "video": t.video.guid,
                             }
                            for t in tqs],
                   "videos": videos_list

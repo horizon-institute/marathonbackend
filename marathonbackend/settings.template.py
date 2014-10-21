@@ -121,3 +121,39 @@ SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
 GMAPS_API_KEY = ""
 
 REGISTRATION_EMAIL_DESTINATION = []
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'marathonbackend.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'marathon': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+        },
+        'tastypie': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+        },
+    }
+}
