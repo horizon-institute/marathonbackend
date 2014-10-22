@@ -21,7 +21,7 @@ def api_detail_auth_logger(detailfunc):
                                                           request.user.username,
                                                           request.user.is_superuser)
         if hasattr(bundle, "obj"):
-            logstr += " %s id=%r"%(bundle.obj.__class__.__name__, getattr(bundle.obj,"id",None))
+            logstr += " %s id=%d"%(bundle.obj.__class__.__name__, getattr(bundle.obj,"id",None))
         logger.debug(logstr)
         return is_authorised
     return loggedfunc
@@ -48,7 +48,7 @@ class LoggedMixin(object):
         try:
             response = super(LoggedMixin, self).dispatch(request_type, request, **kwargs)
         except Exception, e:
-            if hasattr(e, 'response'):
+            if hasattr(e, 'response') and hasattr(e.response, 'status_code'):
                 logger.debug('Response %s' %(e.response.status_code))
             else:
                 logger.debug('Other error')
