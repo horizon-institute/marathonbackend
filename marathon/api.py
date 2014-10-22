@@ -43,8 +43,14 @@ class LoggedMultiAuthentication(MultiAuthentication):
 class LoggedMixin(object):
     
     def dispatch(self, request_type, request, **kwargs):
-
+        
+        logger.debug(" ------ API REQUEST ------ ")
         logger.debug('%s %s %s' % (request.method, request.get_full_path(), request.body))
+        logger.debug("Cookie Session ID=%s, Cookie CSRF Token=%s, CSRF Token Header=%s"%(
+                                        request.COOKIES.get("sessionid",None),
+                                        request.COOKIES.get("csrftoken",None),
+                                        request.META.get("HTTP_X_CSRFTOKEN",None),
+                                    ))
         try:
             response = super(LoggedMixin, self).dispatch(request_type, request, **kwargs)
         except Exception, e:
