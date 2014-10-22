@@ -49,7 +49,7 @@ class LoggedMixin(object):
             response = super(LoggedMixin, self).dispatch(request_type, request, **kwargs)
         except Exception, e:
             if hasattr(e, 'response') and hasattr(e.response, 'status_code'):
-                logger.debug('Response %s' %(e.response.status_code))
+                logger.debug('Response %r' %(e.response.status_code))
             else:
                 logger.debug('Other error')
             raise
