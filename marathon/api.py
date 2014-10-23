@@ -21,7 +21,7 @@ def api_detail_auth_logger(detailfunc):
                                                           request.user.username,
                                                           request.user.is_superuser)
         if hasattr(bundle, "obj"):
-            logstr += " %s id=%d"%(bundle.obj.__class__.__name__, getattr(bundle.obj,"id",None))
+            logstr += " %s id=%r"%(bundle.obj.__class__.__name__, getattr(bundle.obj,"id",None))
         logger.debug(logstr)
         return is_authorised
     return loggedfunc

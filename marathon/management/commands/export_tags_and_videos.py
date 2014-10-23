@@ -58,7 +58,7 @@ class Command(BaseCommand):
         for v in vqs:
             video_obj = {
                      "_id": v.guid,
-                     #"start-time": v.start_time.strftime("%s"),
+                     "start-time": v.start_time.strftime("%s"),
                      "start-time-iso": v.start_time.isoformat(),
                      "spectator": v.spectator.guid,
                      "duration": v.duration,
@@ -100,7 +100,7 @@ class Command(BaseCommand):
                         "runner_number": t.runner_number,
                         "latitude": t.latitude,
                         "longitude": t.longitude,
-                        #"time": t.time.strftime("%s"),
+                        "time": t.time.strftime("%s"),
                         "time-iso": t.time.isoformat(),
                         "spectator": t.video.spectator.guid,
                         "video": t.video.guid,
