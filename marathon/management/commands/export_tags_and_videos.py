@@ -63,6 +63,7 @@ class Command(BaseCommand):
                      "url": v.url,
                      "spectator": v.spectator.guid,
                      "duration": v.duration,
+                     "thumbnail": v.thumbnail,
                          }
             locobj = None
             if v.runnertags.exists():
@@ -105,6 +106,7 @@ class Command(BaseCommand):
                         "time-iso": t.time.isoformat(),
                         "spectator": t.video.spectator.guid,
                         "video": t.video.guid,
+                        "thumbnail": t.thumbnail,
                             }
                            for t in tqs],
                   "videos": videos_list
@@ -112,5 +114,5 @@ class Command(BaseCommand):
         
         
         with open(options["file_name"],'w') as json_file:
-            json_file.write(json.dumps(export_obj))
+            json_file.write(json.dumps(export_obj,indent=4))
         

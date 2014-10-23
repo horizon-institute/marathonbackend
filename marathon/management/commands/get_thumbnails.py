@@ -40,9 +40,10 @@ class Command(NoArgsCommand):
             
             urllib.urlretrieve(url, tmpfilename)
             
+            print "Retrieving %s"%url
+            
             for obj in urldict[url]:
                 
-                print "Getting thumbnails for %s"%url
                 
                 if obj.__class__.__name__ == "Video":
                     frametime = obj.duration/2
@@ -54,7 +55,7 @@ class Command(NoArgsCommand):
                 try:
                     
                     cmdline = 'ffmpeg -vf scale=225:-1 -ss %d -i "%s" -vframes 1 -y "%s"'%(frametime, tmpfilename, jpgfile)
-                    obj.thumbnail = jpgfile
+                    obj.thumbnail = "%s.jpg"%obj.guid
                     obj.save()
                     subprocess.call(cmdline, shell=True)
                     
