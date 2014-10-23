@@ -60,6 +60,7 @@ class Command(BaseCommand):
                      "_id": v.guid,
                      "start-time": v.start_time.strftime("%s"),
                      "start-time-iso": v.start_time.isoformat(),
+                     "url": v.url,
                      "spectator": v.spectator.guid,
                      "duration": v.duration,
                          }

@@ -41,25 +41,7 @@ class Command(NoArgsCommand):
                     duration = 0
                 v.online = True
                 
-                frametime = duration/2
-                
-                jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%v.guid)
-                cmdline = 'ffmpeg -vf scale=225:-1 -ss %d -i "%s" -vframes 1 -y "%s"'%(frametime, mp4file, jpgfile)
-                subprocess.call(cmdline, shell=True)
-                
-                if os.path.isfile(jpgfile):
-                    v.thumbnail = "%s.jpg"%v.guid
-                
                 v.save()
-                
-                for t in v.runnertags.all():
-                    jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%t.guid)
-                    cmdline = 'ffmpeg -vf scale=225:-1 -ss %d -i "%s" -vframes 1 -y "%s"'%(t.video_time, mp4file, jpgfile)
-                    subprocess.call(cmdline, shell=True)
-                        
-                    if os.path.isfile(jpgfile):
-                        t.thumbnail = "%s.jpg"%t.guid
-                        t.save()
                 
                 os.remove(mp4file)
                 
