@@ -3,8 +3,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
-from marathon.api import Activity, SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
-from marathon.views import register, home, landing, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin
+from marathon.api import SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
+from marathon.views import register, home, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin
 from tastypie.api import Api
 from django.views.generic import TemplateView
 
@@ -16,7 +16,6 @@ api.register(VideoResource())
 api.register(RunnerTagResource())
 api.register(PositionUpdateResource())
 api.register(EventResource())
-api.register(Activity())
 api.register(FlaggedContentResource())
 
 urlpatterns = patterns('',

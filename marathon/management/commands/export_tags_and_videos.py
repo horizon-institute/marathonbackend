@@ -27,6 +27,12 @@ class Command(BaseCommand):
             default= None,
             help= 'JSON File name'
         ),
+        make_option('-o', '--online-only',
+            dest= 'online_only',
+            action= 'store_true',
+            default= False,
+            help= 'Export only online videos'
+        ),
     )
     
     
@@ -52,6 +58,10 @@ class Command(BaseCommand):
         sqs = Spectator.objects.filter(videos__event=event).distinct()
         tqs = RunnerTag.objects.filter(video__event=event).exclude(runner_number=-99)
         vqs = Video.objects.filter(event=event)
+        
+        if options["online_only"]:
+            tqs = tqs.filter(video__online=True)
+            vqs = vqs.filter(online=True)
         
         videos_list = []
         
