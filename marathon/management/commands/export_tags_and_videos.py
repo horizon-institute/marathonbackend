@@ -80,13 +80,10 @@ class Command(BaseCommand):
                         locobj = puqs.order_by("-time").first()
                         print "Used a timespan of %d seconds around Video"%delta
                         break
-            if locobj is None:
-                print "No location information"
-                video_obj["latitude"] = 0.
-                video_obj["longitude"] = 0.
-            else:
-                video_obj["latitude"] = locobj.latitude
-                video_obj["longitude"] = locobj.longitude
+                    
+            video_obj["latitude"] = getattr(locobj, "latitude", 0.)
+            video_obj["longitude"] = getattr(locobj, "longitude", 0.)
+            video_obj["accuracy"] = getattr(locobj, "accuracy", -1)
             
             videos_list.append(video_obj)
             #print video_obj
@@ -102,6 +99,7 @@ class Command(BaseCommand):
                         "runner_number": t.runner_number,
                         "latitude": t.latitude,
                         "longitude": t.longitude,
+                        "accuracy": t.accuracy,
                         "time": t.time.strftime("%s"),
                         "time-iso": t.time.isoformat(),
                         "spectator": t.video.spectator.guid,
