@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from marathon.models import Event, Spectator, RunnerTag, Video, PositionUpdate
+from marathon.models import Spectator, RunnerTag, Video, PositionUpdate
 from django.core.management.base import BaseCommand
+from marathon.utils import get_event_from_options
 from optparse import make_option
 import json
 import datetime
@@ -45,15 +46,7 @@ class Command(BaseCommand):
             print "Please enter a file name"
             return
         
-        if options["event_id"] is None:
-            if options["event_name"]:
-                print options["event_name"]
-                event = Event.objects.get(name=options["event_name"])
-            else:
-                print "Please give an event name or id"
-                return
-        else:
-            event = Event.objects.get(id=options["event_id"])
+        event = get_event_from_options(options)
         
         sqs = Spectator.objects.filter(videos__event=event).distinct()
         tqs = RunnerTag.objects.filter(video__event=event).exclude(runner_number=-99)

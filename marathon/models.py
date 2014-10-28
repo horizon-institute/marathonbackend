@@ -112,7 +112,7 @@ class ContentFlag(models.Model):
     CONTENT_TYPE_CLASSES = { modelclass.__name__: modelclass for modelclass in [PositionUpdate, RunnerTag, Video]}
     CONTENT_TYPE_CHOICES = tuple([(k, k) for k in CONTENT_TYPE_CLASSES])
     user = models.ForeignKey(User, db_index=True, null=True, blank=True)
-    content_type = models.CharField(max_length=15, choices=CONTENT_TYPE_CHOICES)
+    content_type = models.CharField(db_index=True, max_length=15, choices=CONTENT_TYPE_CHOICES)
     content_id = models.IntegerField(db_index=True, null=False, blank=False)
     reason = models.TextField(null=True, blank=True)
     flag_date = models.DateTimeField(default=datetime.datetime.now)
@@ -138,3 +138,48 @@ class ContentFlag(models.Model):
      
     def __unicode__(self):
         return "Flagged %s: id=%d"%(self.content_type,self.content_id)
+
+# NEW MODELS FOR SEARCH INTERFACE
+
+class RacePoint(models.Model):
+    event = models.ForeignKey(Event, db_index=True, null=False, blank=False)
+    latitude = models.FloatField(null=False, blank=False, db_index=True)
+    longitude = models.FloatField(null=False, blank=False, db_index=True)
+    distance = models.IntegerField(null=False, blank=False, db_index=True)
+
+class ModelDistance(models.Model):
+    reference_point = models.ForeignKey(RacePoint, db_index=True, null=False, blank=False)
+    accuracy = models.FloatField(null=False, blank=False, db_index=True)
+    
+    class Meta:
+        abstract = True
+
+class VideoDistance(ModelDistance):
+    video = models.ForeignKey(Video, db_index=True, null=False, blank=False)
+
+class LocationName(models.Model):
+    name = models.CharField(max_length=200, db_index=True, null=False, blank=False)
+    type = models.CharField(max_length=50, db_index=True, null=False, blank=False, default="Unknown")
+    
+    def __unicode__(self):
+        return u"%s (%s)"%(self.name, self.type)
+
+class LocationDistance(ModelDistance):
+    location_name = models.ForeignKey(LocationName, related_name="points", db_index=True, null=False, blank=False)
+
+class RaceResult(models.Model):
+    event = models.ForeignKey(Event, db_index=True, null=False, blank=False)
+    runner_number = models.IntegerField(db_index=True, null=False, blank=False)
+    name = models.CharField(max_length=200, default="", db_index=True, null=True, blank=True)
+    finishing_time = models.IntegerField(db_index=True, null=False, blank=False)
+    
+    def __unicode__(self):
+        return u"%s (#%d)"%(self.name, self.runner_number)
+# 
+# class SearchIndex(models.Model):
+#     RESULT_TYPES = (("RunnerTag","runner tag"),("Video","video"))
+#     text = models.CharField(max_length=300, db_index=True, null=False, blank=False)
+#     type = models.CharField(max_length=50, db_index=True, null=False, blank=False)
+#     reference = models.CharField(max_length=50, db_index=True, null=False, blank=False)
+#     result_type = models.CharField(max_length=20, db_index=True, choices=RESULT_TYPES)
+#     result_count = models.IntegerField(db_index=True)
