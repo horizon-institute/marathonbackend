@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from marathon.models import VideoDistance, Video, RacePoint, PositionUpdate
+from marathon.models import VideoDistance, Video, RacePoint, PositionUpdate, RunnerTag
 from django.core.management.base import BaseCommand
 from django.db.models import Avg
 from optparse import make_option
@@ -55,20 +55,25 @@ class Command(BaseCommand):
             print "Finding location for video %s"%v.id
             
             locobj = None
-            if v.runnertags.exists():
-                locobj = v.runnertags.order_by("-time").first()
-                print "Used last runner"
-            else:
-                for delta in [0,10,30,60,120,300,600]:
-                    puqs = PositionUpdate.objects.filter(
-                                 time__gte=v.start_time - datetime.timedelta(0,delta),
-                                 time__lte=v.end_time + datetime.timedelta(0,delta),
-                                 spectator=v.spectator,
-                                 )
-                    if puqs.exists():
-                        locobj = puqs.order_by("-time").first()
-                        print "Used a timespan of %d seconds around Video"%delta
-                        break
+            for delta in [0,10,30,60,120,300,600]:
+                rtqs = RunnerTag.objects.filter(
+                             time__gte=v.start_time - datetime.timedelta(0,delta),
+                             time__lte=v.end_time + datetime.timedelta(0,delta),
+                             video__spectator=v.spectator,
+                             )
+                if rtqs.exists():
+                    locobj = rtqs.order_by("-time").first()
+                    print "Used RunnerTag from a timespan of %d seconds around Video"%delta
+                    break
+                puqs = PositionUpdate.objects.filter(
+                             time__gte=v.start_time - datetime.timedelta(0,delta),
+                             time__lte=v.end_time + datetime.timedelta(0,delta),
+                             spectator=v.spectator,
+                             )
+                if puqs.exists():
+                    locobj = puqs.order_by("-time").first()
+                    print "Used PositionUpdate from a timespan of %d seconds around Video"%delta
+                    break
             
             if locobj and locobj.latitude != 0:
                 point = (locobj.latitude, locobj.longitude)
