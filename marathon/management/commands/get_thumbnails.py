@@ -56,15 +56,16 @@ class Command(NoArgsCommand):
                 
                 try:
                     
-                    cmdline = '%s -vf scale=225:-1 -ss %d -vframes 1 -y -i "%s" "%s"'%(
+                    cmdline = '%s -i "%s" -vf scale=225:-1 -ss %d -vframes 1 -y "%s"'%(
                                                        settings.VIDEO_CONV_CMD,
-                                                       frametime,
                                                        tmpfilename,
+                                                       frametime,
                                                        jpgfile
                                                        )
+                    print cmdline
                     obj.thumbnail = os.path.join(settings.MEDIA_URL,filename)
-                    obj.save()
                     subprocess.call(cmdline, shell=True)
+                    obj.save()
                     
                 except Exception, e:
                     print "ERROR WHEN PROCESSING THUMBNAIL"

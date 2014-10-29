@@ -23,7 +23,7 @@ class Command(NoArgsCommand):
             
             urllib.urlretrieve(v.url, tmpsrc)
             
-            cmdline = '%s "%s"'%(
+            cmdline = '%s -show_streams "%s"'%(
                                               settings.VIDEO_PROBE_CMD,
                                               tmpsrc
                                               )
@@ -32,13 +32,11 @@ class Command(NoArgsCommand):
             width = None
             height = None
             for l in re.split("[\n\r]+",probelines):
-                if "Video:" in l:
-                    res = re.findall("(\d+)x(\d+)",l)
-                    if res:
-                        width = int(res[0])
-                        height = int(res[1])
-                        break
-            
+                t = l.split("=")
+                if t[0] == "width":
+                    width = t[1]
+                if t[0] == "height":
+                    height = t[1] 
             if width and height:
                 if width > height:
                     ow = "240"
@@ -63,6 +61,7 @@ class Command(NoArgsCommand):
                                                                       oh,
                                                                       destfile
                                                                       )
+                print cmdline
                 subprocess.call(cmdline, shell=True)
                 
                 v.lowres_video_url = desturl
