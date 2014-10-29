@@ -56,7 +56,12 @@ class Command(NoArgsCommand):
                 
                 try:
                     
-                    cmdline = 'avconv -vf scale=225:-1 -ss %d -vframes 1 -y -i "%s" "%s"'%(frametime, tmpfilename, jpgfile)
+                    cmdline = '%s -vf scale=225:-1 -ss %d -vframes 1 -y -i "%s" "%s"'%(
+                                                       settings.VIDEO_CONV_CMD,
+                                                       frametime,
+                                                       tmpfilename,
+                                                       jpgfile
+                                                       )
                     obj.thumbnail = os.path.join(settings.MEDIA_URL,filename)
                     obj.save()
                     subprocess.call(cmdline, shell=True)

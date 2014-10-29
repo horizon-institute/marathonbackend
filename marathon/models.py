@@ -67,7 +67,8 @@ class Video(GUIDModel):
     spectator = models.ForeignKey(Spectator, related_name="videos", db_index=True, null=False, blank=False)
     start_time = models.DateTimeField(db_index=True, null=False, blank=False, default=datetime.datetime.now)
     duration = models.IntegerField(db_index=True, null=False, blank=False, default=0)
-    url = models.CharField(max_length=300, default="", db_index=True)
+    url = models.CharField(max_length=300, default="", db_index=True, blank=True)
+    lowres_video_url = models.CharField(max_length=300, default="", db_index=True, blank=True)
     online = models.BooleanField(db_index=True, default=False)
     public = models.BooleanField(db_index=True, default=False)
     thumbnail = models.CharField(max_length=300, default="")
@@ -191,12 +192,165 @@ class RaceResult(models.Model):
     
     def __unicode__(self):
         return u"%s (#%d)"%(self.name, self.runner_number)
-
-# 
-# class SearchIndex(models.Model):
-#     RESULT_TYPES = (("RunnerTag","runner tag"),("Video","video"))
-#     text = models.CharField(max_length=300, db_index=True, null=False, blank=False)
-#     type = models.CharField(max_length=50, db_index=True, null=False, blank=False)
-#     reference = models.CharField(max_length=50, db_index=True, null=False, blank=False)
-#     result_type = models.CharField(max_length=20, db_index=True, choices=RESULT_TYPES)
-#     result_count = models.IntegerField(db_index=True)
+ 
+class SearchIndex(models.Model):
+    
+    INDEX_TYPES = (
+                   ("LocationName","Location name"),
+                   ("RunnerNumber","Runner"),
+                   ("RunningClub","Running club"),
+                   ("AtMinute","Time"),
+                   ("AllVideos","All videos"),
+                   ("AllTags","All tags")
+                   )
+    
+    RESULT_TYPES = {
+            "LocationName": "Video",
+            "RunnerNumber": "RunnerTag",
+            "RunningClub": "RunnerTag",
+            "AtMinute": "RunnerTag",
+            "AllVideos": "Video",
+            "AllTags": "RunnerTag"
+                    }
+    
+    text = models.CharField(max_length=300, db_index=True, null=False, blank=False)
+    type = models.CharField(max_length=50, db_index=True, null=False, blank=False)
+    reference_index = models.IntegerField(db_index=True, null=False, blank=False)
+    result_count = models.IntegerField(db_index=True)
+    event = models.ForeignKey(Event, db_index=True, null=False, blank=False)
+    
+    def calculate_count(self):
+        self.result_count = self.query_set.count()
+    
+    @property
+    def result_type(self):
+        return self.RESULT_TYPES[self.type]
+    
+    @property
+    def query_set(self):
+        return getattr(self,"query_set_%s"%self.type,Video.objects.none())
+    
+    @property
+    def query_set_LocationName(self):
+        refpoints = self.reference_object.points.all()
+        return Video.objects.filter(
+                online = True,
+                event = self.event,
+                videodistance__reference_point__in = refpoints,
+                ).distinct()
+    
+    @property
+    def query_set_RunnerNumber(self):
+        return RunnerTag.objects.filter(
+                            video__event = self.event,
+                            video__online = True,
+                            runner_number = self.reference_index
+                                        )
+    
+    @property
+    def query_set_RunningClub(self):
+        rnos = RaceResult.objects.filter(
+                              club = self.reference_index,
+                              event = self.event,
+                              ).values("runner_number")
+        return RunnerTag.objects.filter(
+                            video__event = self.event,
+                            video__online = True,
+                            runner_number__in=rnos
+                            )
+    
+    @property
+    def query_set_AtMinute(self):
+        return RunnerTag.objects.filter(
+                        video__event = self.event,
+                        video__online = True,
+                        time__gte = self.reference_object,
+                        time__lt = (self.reference_object + datetime.timedelta(0,60))
+                                        )
+    
+    @property
+    def query_set_AllVideos(self):
+        return Video.objects.filter(
+                            event=self.event,
+                            online=True)
+    
+    @property
+    def query_set_AllTags(self):
+        return RunnerTag.objects.filter(video__event=self.event, video__online=True)
+    
+    
+    @property
+    def reference_object(self):
+        return getattr(self,"reference_object_%s"%self.type,None)
+    
+    @property
+    def reference_object_LocationName(self):
+        return LocationName.objects.get(id=self.reference_index)
+    
+    @reference_object_LocationName.setter
+    def reference_object_LocationName(self, value):
+        self.type = "LocationName"
+        self.text = value.name
+        self.reference_index = value.id
+        self.calculate_count()
+    
+    @property
+    def reference_object_RunnerNumber(self):
+        return RaceResult.objects.get(
+                                    event=self.event,
+                                    runner_number=self.reference_index,
+                                    )
+    
+    @reference_object_RunnerNumber.setter
+    def reference_object_RunnerNumber(self, value):
+        self.type = "RunnerNumber"
+        self.text = value.name
+        self.reference_index = value.runner_number
+        self.calculate_count()
+    
+    @property
+    def reference_object_RunningClub(self):
+        return RunningClub.objects.get(id=self.reference_index)
+    
+    @reference_object_RunningClub.setter
+    def reference_object_RunningClub(self, value):
+        self.type = "RunningClub"
+        self.text = value.name
+        self.reference_index = value.id
+        self.calculate_count()
+    
+    
+    @property
+    def reference_object_AtMinute(self):
+        return datetime.datetime.fromtimestamp(self.reference_index)
+    
+    @reference_object_AtMinute.setter
+    def reference_object_AtMinute(self, value):
+        self.type = "AtMinute"
+        self.text = "Runners tagged at %s"%(value.strftime("%H:%M"))
+        self.reference_index = int(value.strftime("%s"))
+        self.calculate_count()
+    
+    
+    @property
+    def reference_object_AllVideos(self):
+        return None
+    
+    @reference_object_AllVideos.setter
+    def reference_object_AllVideos(self, value):
+        self.type = "AllVideos"
+        self.text = "All videos in event"
+        self.reference_index = None
+        self.calculate_count()
+        
+    @property
+    def reference_object_AllTags(self):
+        return None
+    
+    @reference_object_AllTags.setter
+    def reference_object_AllTags(self, value):
+        self.type = "AllTags"
+        self.text = "All tags in event"
+        self.reference_index = None
+        self.calculate_count()
+    

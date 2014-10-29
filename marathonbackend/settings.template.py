@@ -98,6 +98,10 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+VIDEO_PROBE_CMD = "avprobe"
+
+VIDEO_CONV_CMD = "avconv"
+
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 # Auth Settings
 AUTHENTICATION_BACKENDS = (

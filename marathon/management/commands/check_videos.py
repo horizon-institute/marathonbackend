@@ -31,7 +31,10 @@ class Command(NoArgsCommand):
                 mp4output.close()
                 
                 
-                cmdline = 'ffprobe "%s" -show_format'%mp4file
+                cmdline = '%s "%s" -show_format'%(
+                                                  settings.VIDEO_PROBE_CMD,
+                                                  mp4file
+                                                  )
                 probelines = subprocess.check_output(cmdline, shell=True)
                 durlines = [l for l in re.split("[\n\r]+",probelines) if l[:9] == "duration="]
                 if durlines:
