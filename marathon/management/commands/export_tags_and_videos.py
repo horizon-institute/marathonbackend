@@ -10,7 +10,7 @@ import pytz
 
 class Command(BaseCommand):
     
-    help = "Import a tag and video description file"
+    help = "Exports a tag and video description file"
     
     option_list = BaseCommand.option_list + (
         make_option('-n', '--event-name',

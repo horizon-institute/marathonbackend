@@ -11,7 +11,7 @@ import datetime
 
 class Command(BaseCommand):
     
-    help = "Import a tag and video description file"
+    help = "Calculate distances along the course for videos of an event"
     
     option_list = BaseCommand.option_list + (
         make_option('-n', '--event-name',

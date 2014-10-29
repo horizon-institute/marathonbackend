@@ -8,7 +8,7 @@ import json
 
 class Command(BaseCommand):
     
-    help = "Import a tag and video description file"
+    help = "Import race results"
     
     option_list = BaseCommand.option_list + (
         make_option('-n', '--event-name',

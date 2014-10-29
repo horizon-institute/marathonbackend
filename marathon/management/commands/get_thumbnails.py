@@ -9,7 +9,7 @@ import urllib
 
 class Command(NoArgsCommand):
     
-    help = "Import a spectator description file"
+    help = "Creating thumbnails for videos"
     
     def handle(self, *args, **options):
         

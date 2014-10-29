@@ -7,7 +7,7 @@ import subprocess, os, urllib, re
 
 class Command(NoArgsCommand):
     
-    help = "Import a spectator description file"
+    help = "Creates low resolution, web-compliant versions of videos"
     
     def handle(self, *args, **options):
                 

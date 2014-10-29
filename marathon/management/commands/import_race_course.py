@@ -10,7 +10,7 @@ from geopy.point import Point
 
 class Command(BaseCommand):
     
-    help = "Import a tag and video description file"
+    help = "Import a GeoJSON file describing the course"
     
     option_list = BaseCommand.option_list + (
         make_option('-n', '--event-name',

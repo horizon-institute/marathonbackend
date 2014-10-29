@@ -9,7 +9,7 @@ import json, urllib2
 
 class Command(BaseCommand):
     
-    help = "Import a tag and video description file"
+    help = "Importing OpenStreetMap data"
     
     option_list = BaseCommand.option_list + (
         make_option('-n', '--event-name',

@@ -7,7 +7,7 @@ from optparse import make_option
 
 class Command(BaseCommand):
     
-    help = "Import a tag and video description file"
+    help = "Create markers along the race"
     
     option_list = BaseCommand.option_list + (
         make_option('-n', '--event-name',

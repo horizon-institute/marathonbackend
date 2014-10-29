@@ -11,7 +11,7 @@ import re
 
 class Command(NoArgsCommand):
     
-    help = "Import a spectator description file"
+    help = "Check if videos are online"
     
     def handle(self, *args, **options):
         
