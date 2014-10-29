@@ -8,16 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'RacePoint'
-        db.create_table(u'marathon_racepoint', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['marathon.Event'])),
-            ('latitude', self.gf('django.db.models.fields.FloatField')(db_index=True)),
-            ('longitude', self.gf('django.db.models.fields.FloatField')(db_index=True)),
-            ('distance', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
-        ))
-        db.send_create_signal(u'marathon', ['RacePoint'])
-
         # Adding model 'LocationName'
         db.create_table(u'marathon_locationname', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -49,10 +39,28 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['marathon.Event'])),
             ('runner_number', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(default='', max_length=200, null=True, db_index=True, blank=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=200, null=True, blank=True)),
             ('finishing_time', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
+            ('club', self.gf('django.db.models.fields.related.ForeignKey')(related_name='runners', null=True, to=orm['marathon.RunningClub'])),
         ))
         db.send_create_signal(u'marathon', ['RaceResult'])
+
+        # Adding model 'RacePoint'
+        db.create_table(u'marathon_racepoint', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['marathon.Event'])),
+            ('latitude', self.gf('django.db.models.fields.FloatField')(db_index=True)),
+            ('longitude', self.gf('django.db.models.fields.FloatField')(db_index=True)),
+            ('distance', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
+        ))
+        db.send_create_signal(u'marathon', ['RacePoint'])
+
+        # Adding model 'RunningClub'
+        db.create_table(u'marathon_runningclub', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=200, db_index=True)),
+        ))
+        db.send_create_signal(u'marathon', ['RunningClub'])
 
         # Adding index on 'ContentFlag', fields ['content_type']
         db.create_index(u'marathon_contentflag', ['content_type'])
@@ -61,9 +69,6 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         # Removing index on 'ContentFlag', fields ['content_type']
         db.delete_index(u'marathon_contentflag', ['content_type'])
-
-        # Deleting model 'RacePoint'
-        db.delete_table(u'marathon_racepoint')
 
         # Deleting model 'LocationName'
         db.delete_table(u'marathon_locationname')
@@ -76,6 +81,12 @@ class Migration(SchemaMigration):
 
         # Deleting model 'RaceResult'
         db.delete_table(u'marathon_raceresult')
+
+        # Deleting model 'RacePoint'
+        db.delete_table(u'marathon_racepoint')
+
+        # Deleting model 'RunningClub'
+        db.delete_table(u'marathon_runningclub')
 
 
     models = {
@@ -173,10 +184,11 @@ class Migration(SchemaMigration):
         },
         u'marathon.raceresult': {
             'Meta': {'object_name': 'RaceResult'},
+            'club': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'runners'", 'null': 'True', 'to': u"orm['marathon.RunningClub']"}),
             'event': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['marathon.Event']"}),
             'finishing_time': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '200', 'null': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'runner_number': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'})
         },
         u'marathon.runnertag': {
@@ -193,6 +205,11 @@ class Migration(SchemaMigration):
             'thumbnail': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '300'}),
             'time': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
             'video': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'runnertags'", 'to': u"orm['marathon.Video']"})
+        },
+        u'marathon.runningclub': {
+            'Meta': {'object_name': 'RunningClub'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_index': 'True'})
         },
         u'marathon.spectator': {
             'Meta': {'object_name': 'Spectator'},

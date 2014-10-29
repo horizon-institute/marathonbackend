@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from marathon.models import RaceResult
+from marathon.models import RaceResult, RunningClub
 from marathon.utils import get_event_from_options
 from django.core.management.base import BaseCommand
 from optparse import make_option
 import json
-from geopy import distance
-from geopy.point import Point
 
 class Command(BaseCommand):
     
@@ -47,15 +45,19 @@ class Command(BaseCommand):
             result_list = json.loads(json_file.read())
             
             for result in result_list:
-                if result["name"]:
-                    finish_time_parts = [int(k) for k in result["finish_time"].split(":")]
-                    finish_time = 3600 * finish_time_parts[0] + 60 * finish_time_parts[1] + finish_time_parts[2]
-                    RaceResult.objects.create(
-                                              event = event,
-                                              finishing_time = finish_time,
-                                              name = result["name"],
-                                              runner_number = result["bib"]
-                                              )
+                if result["club"]:
+                    club, created = RunningClub.objects.get_or_create(name=result["club"])
+                else:
+                    club = None
+                finish_time_parts = [int(k) for k in result["finish_time"].split(":")]
+                finish_time = 3600 * finish_time_parts[0] + 60 * finish_time_parts[1] + finish_time_parts[2]
+                RaceResult.objects.create(
+                                          event = event,
+                                          finishing_time = finish_time,
+                                          name = result["name"],
+                                          runner_number = result["bib"],
+                                          club = club
+                                          )
             
             print "%d Race result objects created"%RaceResult.objects.filter(event=event).count()
             

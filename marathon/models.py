@@ -147,6 +147,9 @@ class RacePoint(models.Model):
     longitude = models.FloatField(null=False, blank=False, db_index=True)
     distance = models.IntegerField(null=False, blank=False, db_index=True)
 
+    def __unicode__(self):
+        return "%dm"%self.distance
+
 class ModelDistance(models.Model):
     reference_point = models.ForeignKey(RacePoint, db_index=True, null=False, blank=False)
     accuracy = models.FloatField(null=False, blank=False, db_index=True)
@@ -157,6 +160,9 @@ class ModelDistance(models.Model):
 class VideoDistance(ModelDistance):
     video = models.ForeignKey(Video, db_index=True, null=False, blank=False)
 
+    def __unicode__(self):
+        return u"%s at %s"%(self.video, self.reference_point.distance)
+
 class LocationName(models.Model):
     name = models.CharField(max_length=200, db_index=True, null=False, blank=False)
     type = models.CharField(max_length=50, db_index=True, null=False, blank=False, default="Unknown")
@@ -166,15 +172,26 @@ class LocationName(models.Model):
 
 class LocationDistance(ModelDistance):
     location_name = models.ForeignKey(LocationName, related_name="points", db_index=True, null=False, blank=False)
+    
+    def __unicode__(self):
+        return u"%s at %s"%(self.location_name, self.reference_point)
+
+class RunningClub(models.Model):
+    name = models.CharField(max_length=200, db_index=True, null=False, blank=False)
+    
+    def __unicode__(self):
+        return self.name
 
 class RaceResult(models.Model):
     event = models.ForeignKey(Event, db_index=True, null=False, blank=False)
     runner_number = models.IntegerField(db_index=True, null=False, blank=False)
-    name = models.CharField(max_length=200, default="", db_index=True, null=True, blank=True)
+    name = models.CharField(max_length=200, db_index=True, null=True, blank=True)
     finishing_time = models.IntegerField(db_index=True, null=False, blank=False)
+    club = models.ForeignKey(RunningClub, related_name="runners", db_index=True, null=True)
     
     def __unicode__(self):
         return u"%s (#%d)"%(self.name, self.runner_number)
+
 # 
 # class SearchIndex(models.Model):
 #     RESULT_TYPES = (("RunnerTag","runner tag"),("Video","video"))
