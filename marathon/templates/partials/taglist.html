@@ -11,7 +11,7 @@
         data-tag-time="{{runnertag.video_time}}">
     {% if runnertag.video.online %}
         <div class="item-video">
-            <img src="{% if runnertag.thumbnail %}{{MEDIA_URL}}{{runnertag.thumbnail}}{%else%}{{STATIC_URL}}images/no-thumbnail.png{% endif %}" />
+            <img src="{% if runnertag.thumbnail %}{{runnertag.thumbnail}}{%else%}{{STATIC_URL}}images/no-thumbnail.png{% endif %}" />
         </div>
     {% else %}
         <div class="item-video">

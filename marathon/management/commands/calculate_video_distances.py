@@ -104,7 +104,7 @@ class Command(BaseCommand):
                     VideoDistance.objects.create(
                                              video = v,
                                              reference_point = pt["point"],
-                                             accuracy = max(10, v.accuracy, pt["delta"])
+                                             accuracy = max(10, locobj.accuracy, pt["delta"])
                                                  )
                     
             else:

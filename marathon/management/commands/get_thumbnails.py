@@ -6,7 +6,6 @@ from django.conf import settings
 import subprocess
 import os
 import urllib
-import re
 
 class Command(NoArgsCommand):
     
@@ -47,15 +46,18 @@ class Command(NoArgsCommand):
                 
                 if obj.__class__.__name__ == "Video":
                     frametime = obj.duration/2
+                    framedir = "video"
                 else:
                     frametime = obj.video_time
+                    framedir = "runnertag"
                 
-                jpgfile = os.path.join(settings.MEDIA_ROOT,"%s.jpg"%obj.guid)
+                filename = os.path.join("thumbnails",framedir,"%s.jpg"%obj.guid)
+                jpgfile = os.path.join(settings.MEDIA_ROOT,filename)
                 
                 try:
                     
-                    cmdline = 'ffmpeg -vf scale=225:-1 -ss %d -i "%s" -vframes 1 -y "%s"'%(frametime, tmpfilename, jpgfile)
-                    obj.thumbnail = "%s.jpg"%obj.guid
+                    cmdline = 'avconv -vf scale=225:-1 -ss %d -vframes 1 -y -i "%s" "%s"'%(frametime, tmpfilename, jpgfile)
+                    obj.thumbnail = os.path.join(settings.MEDIA_URL,filename)
                     obj.save()
                     subprocess.call(cmdline, shell=True)
                     
