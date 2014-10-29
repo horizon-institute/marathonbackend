@@ -63,7 +63,7 @@ class Command(NoArgsCommand):
                                                                       oh,
                                                                       destfile
                                                                       )
-                print cmdline
+                self.logger.debug(cmdline)
                 subprocess.call(cmdline, shell=True)
                 
                 v.lowres_video_url = desturl
@@ -73,7 +73,7 @@ class Command(NoArgsCommand):
                 
             except Exception:
                 print "Error while processing video"
-                self.logger.debug("Error while processing Video ID=%d"%v.id)
+                self.logger.error("Error while processing Video ID=%d"%v.id)
             
             os.remove(tmpsrc)
             
