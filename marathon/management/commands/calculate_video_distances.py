@@ -96,7 +96,7 @@ class Command(BaseCommand):
                         candidatepoints = [p for p in candidatepoints if abs(p["point"].distance-lastdist) > otherleg]
                     pointcache[cachekey] = bestpoints
                     if (len(bestpoints) > 1):
-                        print "Ambiguous location: %s"%(",".join([p["point"].distance for p in bestpoints]))
+                        print "Ambiguous location: %s"%(",".join(["%dm"%p["point"].distance for p in bestpoints]))
                     pointcache[cachekey] = bestpoints
                     
                 for pt in bestpoints:
