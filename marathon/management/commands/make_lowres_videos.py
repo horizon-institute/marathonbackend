@@ -3,11 +3,13 @@
 from marathon.models import Video
 from django.core.management.base import NoArgsCommand
 from django.conf import settings
-import subprocess, os, urllib, re
+import subprocess, os, urllib, re, logging
 
 class Command(NoArgsCommand):
     
     help = "Creates low resolution, web-compliant versions of videos"
+    
+    logger = logging.getLogger(__name__)
     
     def handle(self, *args, **options):
                 
@@ -67,8 +69,11 @@ class Command(NoArgsCommand):
                 v.lowres_video_url = desturl
                 v.save()
                 
+                self.logger.debug("Made low res video for Video ID=%d"%v.id)
+                
             except Exception:
                 print "Error while processing video"
+                self.logger.debug("Error while processing Video ID=%d"%v.id)
             
             os.remove(tmpsrc)
             
