@@ -7,8 +7,8 @@ Duration: {{result.object.duration|minsecs}}
 {% if result.object.runnertags %}
 {% for tag in runnertag %}
 {{tag.label}} at {{tag.video_time|minsecs}}
-{% endif %}
 {% endfor %}
+{% endif %}
 
 {% if result.object.videodistance_set.count %}
 Distance(s):
