@@ -5,14 +5,14 @@ Video from {{object.start_time|date:"D d/m/Y H:i"}} to {{object.start_time|date:
 Duration: {{object.duration|minsecs}}
 
 {% if object.runnertags.exists %}
-    {% for tag in object.runnertags %}
+    {% for tag in object.runnertags.all %}
         {{tag.label}} at {{tag.video_time|minsecs}}
     {% endfor %}
 {% endif %}
 
 {% if object.videodistance_set.exists %}
     Distance(s):
-    {% for d in object.videodistance_set %}
+    {% for d in object.videodistance_set.all %}
         {{d.referencepoint.distance_kilometres|floatformat:3}}km ({{d.referencepoint.distance_miles|floatformat:3}}mi)
     {% endfor %}
     
