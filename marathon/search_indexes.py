@@ -10,7 +10,7 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
     thumbnail = indexes.CharField(model_attr="thumbnail")
     
     def prepare_distances(self, obj):
-        return [d.referencepoint.distance for d in obj.videodistance_set.all()]
+        return [d.reference_point.distance for d in obj.videodistance_set.all()]
     
     def prepare_runners(self, obj):
         return [d.label for d in obj.runnertags.all()]
