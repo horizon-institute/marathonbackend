@@ -1,5 +1,8 @@
 {% extends 'base_v2.html' %}
 {% load highlight %}
+{% block header_declarations %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/result-lists.css" %}" />
+{% endblock %}
 
 {% block bottom_content %}
     <h2>Search</h2>

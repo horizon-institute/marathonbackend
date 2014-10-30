@@ -1,5 +1,4 @@
 {% load marathontags %}
-
 Video from {{object.start_time|date:"D d/m/Y H:i"}} to {{object.start_time|date:"D d/m/Y H:i"}}
 
 Duration: {{object.duration|minsecs}}

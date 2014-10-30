@@ -255,3 +255,7 @@ footer {
 footer li {
     display: inline; margin-left: .8em;
 }
+
+.highlight {
+    font-weight: bold;
+}

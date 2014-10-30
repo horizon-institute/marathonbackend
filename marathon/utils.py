@@ -1,5 +1,6 @@
 import math
 from marathon.models import Event
+from haystack.utils import Highlighter
 
 EARTH_RADIUS = 6371000.
 
@@ -18,3 +19,19 @@ def get_event_from_options(options):
     else:
         event = Event.objects.get(id=options["event_id"])
     return event
+
+class MyHighlighter(Highlighter):
+    def render_html(self, highlight_locations=None, start_offset=None, end_offset=None):
+        
+        text = super(MyHighlighter, self).render_html(
+                                           highlight_locations=highlight_locations,
+                                           start_offset=None,
+                                           end_offset=None)
+        
+        lines = text.split("\n")
+        res = ""
+        for l in lines:
+            if "Video from" in l or '<span class="highlighted">' in l:
+                res += l
+        
+        return res
