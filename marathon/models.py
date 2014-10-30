@@ -108,10 +108,10 @@ class RunnerTag(GUIDModel):
     @property
     def race_result(self):
         try:
-            RaceResult.objects.get(
+            return str(RaceResult.objects.get(
                                    event=self.video.event,
                                    runner_number=self.runner_number
-                                   )
+                                   ))
         except RaceResult.DoesNotExist:
             return None
     
@@ -122,7 +122,7 @@ class RunnerTag(GUIDModel):
         rr = self.race_result
         if rr is not None:
             return unicode(self.race_result)
-        return "Unknown"
+        return "Unknown runner (#%d)"%self.runner_number
     
     def __unicode__(self):
         return "Runner #%d tagged by %s at %s"%(self.runner_number, self.video.spectator.name, self.time)
