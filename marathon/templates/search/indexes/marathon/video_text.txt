@@ -4,20 +4,20 @@ Video from {{result.object.start_time|date:"D d/m/Y H:i"}} to {{result.object.st
 
 Duration: {{result.object.duration|minsecs}}
 
-{% if result.object.runnertags %}
-{% for tag in runnertag %}
-{{tag.label}} at {{tag.video_time|minsecs}}
-{% endfor %}
+{% if result.object.runnertags.exists %}
+    {% for tag in result.object.runnertags %}
+        {{tag.label}} at {{tag.video_time|minsecs}}
+    {% endfor %}
 {% endif %}
 
-{% if result.object.videodistance_set.count %}
-Distance(s):
-{% for d in result.object.videodistance_set %}
-{{d.referencepoint.distance_kilometres|floatformat:3}}km ({{d.referencepoint.distance_miles|floatformat:3}}mi)
-{% endfor %}
-
-Locations in video:
-{% for l in result.object.locations %}
-{{l.location_name.name}}
-{% endfor %}
+{% if result.object.videodistance_set.exists %}
+    Distance(s):
+    {% for d in result.object.videodistance_set %}
+        {{d.referencepoint.distance_kilometres|floatformat:3}}km ({{d.referencepoint.distance_miles|floatformat:3}}mi)
+    {% endfor %}
+    
+    Locations in video:
+    {% for l in result.object.locations %}
+        {{l.location_name.name}}
+    {% endfor %}
 {% endif %}
