@@ -11,7 +11,7 @@ Duration: {{object.duration|minsecs}}
 {% endif %}
 
 {% if object.videodistance_set.exists %}
-    Distance{% if object.videodistance_set.count %}s{% end %}:
+    Distance{% if object.videodistance_set.count %}s{% endif %}:
     {% for d in object.videodistance_set.all %}
         {{d.reference_point.distance_kilometres|floatformat:3}}km ({{d.reference_point.distance_miles|floatformat:3}}mi)
     {% endfor %}
