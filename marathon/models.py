@@ -117,7 +117,7 @@ class RunnerTag(GUIDModel):
     
     @property
     def label(self):
-        if self.is_hot_tag():
+        if self.is_hot_tag:
             return "Hot tag"
         rr = self.race_result
         if rr is not None:
