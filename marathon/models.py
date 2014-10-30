@@ -121,7 +121,7 @@ class RunnerTag(GUIDModel):
             return "Hot tag"
         rr = self.race_result
         if rr is not None:
-            return unicode(self.race_result)
+            return str(self.race_result)
         return "Unknown runner (#%d)"%self.runner_number
     
     def __unicode__(self):
