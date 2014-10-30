@@ -6,8 +6,6 @@ from marathon.models import Spectator, Video, RunnerTag, PositionUpdate, Event, 
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.conf.urls import url
 from django.db.models import Q
-import datetime
-from django.core.urlresolvers import reverse
 import logging
 
 logger = logging.getLogger(__name__)

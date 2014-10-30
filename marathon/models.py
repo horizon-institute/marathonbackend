@@ -209,9 +209,15 @@ class SearchIndex(models.Model):
             "RunnerNumber": "RunnerTag",
             "RunningClub": "RunnerTag",
             "AtMinute": "RunnerTag",
+            "AtKilometre": "Video",
+            "AtMile": "Video",
             "AllVideos": "Video",
             "AllTags": "RunnerTag"
                     }
+    
+    KILOMETRE = 1000.
+    
+    MILE = 1609.344
     
     text = models.CharField(max_length=300, db_index=True, null=False, blank=False)
     type = models.CharField(max_length=50, db_index=True, null=False, blank=False)
@@ -219,8 +225,14 @@ class SearchIndex(models.Model):
     result_count = models.IntegerField(db_index=True)
     event = models.ForeignKey(Event, db_index=True, null=False, blank=False)
     
+    def __unicode__(self):
+        return '"%s" (%d %s)'%(self.text, self.result_count, self.result_type)
+    
     def calculate_count(self):
         self.result_count = self.query_set.count()
+    
+    def ordinal(self, n):
+        return str(n)+("th" if 4<=n%100<=20 else {1:"st",2:"nd",3:"rd"}.get(n%10, "th"))
     
     @property
     def result_type(self):
@@ -229,6 +241,9 @@ class SearchIndex(models.Model):
     @property
     def query_set(self):
         return getattr(self,"query_set_%s"%self.type,Video.objects.none())
+    
+    def get_query_set_between_distances(self, distance):
+        return Video.objects
     
     @property
     def query_set_LocationName(self):
@@ -268,6 +283,22 @@ class SearchIndex(models.Model):
                         time__lt = (self.reference_object + datetime.timedelta(0,60))
                                         )
     
+    def get_query_set_at_distance(self, distance_multiplier):
+        return Video.objects.filter(
+                        event = self.event,
+                        online = True,
+                        videodistance__reference_point__distance__gte=(self.reference_index-1)*distance_multiplier,
+                        videodistance__reference_point__distance__lte=self.reference_index*distance_multiplier,
+                                        )
+    
+    @property
+    def query_set_AtKilometre(self):
+        return self.get_query_set_at_distance(self.KILOMETRE)
+    
+    @property
+    def query_set_AtMile(self):
+        return self.get_query_set_at_distance(self.MILE)
+    
     @property
     def query_set_AllVideos(self):
         return Video.objects.filter(
@@ -290,7 +321,7 @@ class SearchIndex(models.Model):
     @reference_object_LocationName.setter
     def reference_object_LocationName(self, value):
         self.type = "LocationName"
-        self.text = value.name
+        self.text = unicode(value)
         self.reference_index = value.id
         self.calculate_count()
     
@@ -304,7 +335,7 @@ class SearchIndex(models.Model):
     @reference_object_RunnerNumber.setter
     def reference_object_RunnerNumber(self, value):
         self.type = "RunnerNumber"
-        self.text = value.name
+        self.text = unicode(value)
         self.reference_index = value.runner_number
         self.calculate_count()
     
@@ -331,6 +362,27 @@ class SearchIndex(models.Model):
         self.reference_index = int(value.strftime("%s"))
         self.calculate_count()
     
+    @property
+    def reference_object_AtKilometre(self):
+        return self.reference_index
+    
+    @reference_object_AtKilometre.setter
+    def reference_object_AtKilometre(self, value):
+        self.type = "AtKilometre"
+        self.text = "Videos at %s kilometre"%(self.ordinal(value))
+        self.reference_index = value
+        self.calculate_count()
+    
+    @property
+    def reference_object_AtMile(self):
+        return self.reference_index
+    
+    @reference_object_AtMile.setter
+    def reference_object_AtMile(self, value):
+        self.type = "AtKilometre"
+        self.text = "Videos at %s mile"%(self.ordinal(value))
+        self.reference_index = value
+        self.calculate_count()
     
     @property
     def reference_object_AllVideos(self):
@@ -340,7 +392,7 @@ class SearchIndex(models.Model):
     def reference_object_AllVideos(self, value):
         self.type = "AllVideos"
         self.text = "All videos in event"
-        self.reference_index = None
+        self.reference_index = -1
         self.calculate_count()
         
     @property
@@ -351,6 +403,6 @@ class SearchIndex(models.Model):
     def reference_object_AllTags(self, value):
         self.type = "AllTags"
         self.text = "All tags in event"
-        self.reference_index = None
+        self.reference_index = -1
         self.calculate_count()
     
