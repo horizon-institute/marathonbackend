@@ -1,23 +1,23 @@
 {% load marathontags %}
 
-Video from {{result.object.start_time|date:"D d/m/Y H:i"}} to {{result.object.start_time|date:"D d/m/Y H:i"}}
+Video from {{object.start_time|date:"D d/m/Y H:i"}} to {{object.start_time|date:"D d/m/Y H:i"}}
 
-Duration: {{result.object.duration|minsecs}}
+Duration: {{object.duration|minsecs}}
 
-{% if result.object.runnertags.exists %}
-    {% for tag in result.object.runnertags %}
+{% if object.runnertags.exists %}
+    {% for tag in object.runnertags %}
         {{tag.label}} at {{tag.video_time|minsecs}}
     {% endfor %}
 {% endif %}
 
-{% if result.object.videodistance_set.exists %}
+{% if object.videodistance_set.exists %}
     Distance(s):
-    {% for d in result.object.videodistance_set %}
+    {% for d in object.videodistance_set %}
         {{d.referencepoint.distance_kilometres|floatformat:3}}km ({{d.referencepoint.distance_miles|floatformat:3}}mi)
     {% endfor %}
     
     Locations in video:
-    {% for l in result.object.locations %}
+    {% for l in object.locations %}
         {{l.location_name.name}}
     {% endfor %}
 {% endif %}
