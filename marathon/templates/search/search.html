@@ -20,9 +20,7 @@
                 <img src="{% if result.thumbnail %}{{result.thumbnail}}{%else%}{{STATIC_URL}}images/no-thumbnail.png{% endif %}" />
             </div>
             <ul class="video-metadata">
-                <li>
-                    {% highlight result.text with query %}
-                </li>
+                {% highlight result.text with query %}
             </ul>
             </li>
             {% empty %}

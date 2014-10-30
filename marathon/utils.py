@@ -25,13 +25,13 @@ class MyHighlighter(Highlighter):
         
         text = super(MyHighlighter, self).render_html(
                                            highlight_locations=highlight_locations,
-                                           start_offset=None,
+                                           start_offset=0,
                                            end_offset=None)
         
         lines = text.split("\n")
         res = ""
         for l in lines:
             if "Video from" in l or '<span class="highlighted">' in l:
-                res += l
+                res += "<li>%s</li>"%l
         
         return res
