@@ -5,8 +5,12 @@ from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from marathon.api import SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
 from marathon.views import register, home, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin
+from marathon.models import Video
 from tastypie.api import Api
 from django.views.generic import TemplateView
+from haystack.views import SearchView, search_view_factory
+from haystack.query import SearchQuerySet
+from haystack.forms import ModelSearchForm
 
 admin.autodiscover()
 
@@ -42,5 +46,12 @@ urlpatterns = patterns('',
     url(r'^about/faq/', TemplateView.as_view(template_name='faq.html'), name='about_faq'),
     url(r'^about/consent/', TemplateView.as_view(template_name='consent.html'), name='about_consent'),
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt',
-                                  content_type='text/plain'))
+                                  content_type='text/plain')),
+    url(r'^search-video/', search_view_factory(
+        view_class=SearchView,
+        template='search/search.html',
+        searchqueryset=SearchQuerySet().models(Video),
+        form_class=ModelSearchForm
+    ), name='haystack_searc_video'),
+   
 )
