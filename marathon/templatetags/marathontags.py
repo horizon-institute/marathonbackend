@@ -4,4 +4,4 @@ register = template.Library()
 
 @register.filter
 def minsecs(value):
-    return "%02d:%02d"%(divmod(value,60))
+    return "%02d:%02d"%(divmod(int(value),60))
