@@ -108,10 +108,10 @@ class RunnerTag(GUIDModel):
     @property
     def race_result(self):
         try:
-            return str(RaceResult.objects.get(
+            return RaceResult.objects.get(
                                    event=self.video.event,
                                    runner_number=self.runner_number
-                                   ))
+                                   )
         except RaceResult.DoesNotExist:
             return None
     
