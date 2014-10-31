@@ -18,9 +18,9 @@
     {% if facets.fields %}
     <h2>Facets</h2>
     <dl>
-    {% for facetfield,name in facets.fields.items %}
+    {% for name,facetfield in facets.fields.items %}
         <dt>{{name|capfirst}}</dt>
-        {% for aspect in facetfield|slice:5 %}
+        {% for aspect in facetfield|slice:":5" %}
         <dd>
             <a href="{{ request.get_full_path }}&amp;selected_facets={{name}}_exact:{{ aspect.0|urlencode }}">{{ aspect.0 }}</a>
             ({{ aspect.1 }})
