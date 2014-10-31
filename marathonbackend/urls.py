@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     url(r'^search-video/', search_view_factory(
         view_class=FacetedSearchView,
         template='search/search.html',
-        searchqueryset=SearchQuerySet().facet("event"),
+        searchqueryset=SearchQuerySet().facet("event").facet("distance").facet("time"),
         form_class=FacetedSearchForm
     ), name='haystack_search_video'),
    
