@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.db.models import Count
 from marathon.models import  Video, RunnerTag
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -161,3 +161,8 @@ class AllTagsList(ListView):
         context = super(AllTagsList, self).get_context_data(**kwargs)
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
+
+class VideoDetail(DetailView):
+    template_name = "video_detail.html"
+    model = Video
+    

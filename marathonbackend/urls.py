@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from marathon.api import SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
-from marathon.views import register, home, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin
+from marathon.views import register, home, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin, VideoDetail
 from marathon.models import Video
 from tastypie.api import Api
 from django.views.generic import TemplateView
@@ -47,6 +47,7 @@ urlpatterns = patterns('',
     url(r'^about/consent/', TemplateView.as_view(template_name='consent.html'), name='about_consent'),
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt',
                                   content_type='text/plain')),
+    url(r'^video/(?P<pk>\d+)/', VideoDetail.as_view(), name="video_detail"),
     url(r'^search-video/', search_view_factory(
         view_class=SearchView,
         template='search/search.html',

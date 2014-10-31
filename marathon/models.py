@@ -115,15 +115,6 @@ class RunnerTag(GUIDModel):
         except RaceResult.DoesNotExist:
             return None
     
-    @property
-    def label(self):
-        if self.is_hot_tag:
-            return "Hot tag"
-        rr = self.race_result
-        if rr is not None:
-            return str(self.race_result)
-        return "Unknown runner (#%d)"%self.runner_number
-    
     def __unicode__(self):
         return "Runner #%d tagged by %s at %s"%(self.runner_number, self.video.spectator.name, self.time)
 

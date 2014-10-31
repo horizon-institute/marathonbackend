@@ -17,10 +17,14 @@
             {% for result in page.object_list %}
             <li class="item">
             <div class="item-video">
-                <img src="{% if result.thumbnail %}{{result.thumbnail}}{%else%}{{STATIC_URL}}images/no-thumbnail.png{% endif %}" />
+                <a href="{% url "video_detail" result.pk %}">
+                    <img src="{% if result.thumbnail %}{{result.thumbnail}}{%else%}{{STATIC_URL}}images/no-thumbnail.png{% endif %}" />
+                </a>
             </div>
             <ul class="video-metadata">
+                {% if result.text %}
                 {% highlight result.text with query %}
+                {% endif %}
             </ul>
             </li>
             {% empty %}

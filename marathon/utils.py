@@ -31,7 +31,7 @@ class MyHighlighter(Highlighter):
         lines = text.split("\n")
         res = ""
         for l in lines:
-            if "Video from" in l or '<span class="highlighted">' in l:
+            if "Video of" in l or '<span class="highlighted">' in l:
                 res += "<li>%s</li>"%l
         
         return res

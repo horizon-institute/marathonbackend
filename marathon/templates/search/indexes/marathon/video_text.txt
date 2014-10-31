@@ -1,14 +1,13 @@
 {% load marathontags %}
-Video from {{object.start_time|date:"D d/m/Y H:i"}} to {{object.start_time|date:"D d/m/Y H:i"}}
-
+Video of {{object.event.name}}
+Start time: {{object.start_time|date:"D d/m/Y H:i"}}
+End time: {{object.start_time|date:"D d/m/Y H:i"}}
 Duration: {{object.duration|minsecs}}
-
 {% if object.runnertags.exists %}
     {% for tag in object.runnertags.all %}
-        {{tag.label}} at {{tag.video_time|minsecs}}
+        {% if tag.is_hot_tag %}Hot tag{% else %}{% with tag.race_result as rr %}{% if rr %}rr.name{% if rr.club %} from {{rr.club.name}}{% endif %}{% endif %}{% endwith %}(#{{tag.runner_number}}){% endif %} at {{tag.video_time|minsecs}}
     {% endfor %}
 {% endif %}
-
 {% if object.videodistance_set.exists %}
     Distance{% if object.videodistance_set.count %}s{% endif %}:
     {% for d in object.videodistance_set.all %}

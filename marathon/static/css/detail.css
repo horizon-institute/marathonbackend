@@ -1,0 +1,14 @@
+table.video-metadata {
+    font-size: .8em; margin: .2em 0; width: 100%;
+}
+
+.video-metadata th, .video-metadata td {
+    padding: .1em 0;
+}
+.video-metadata th {
+    font-weight: 600; text-align: left;
+}
+
+video {
+    width: 100%; margin: .3em 0;
+}
