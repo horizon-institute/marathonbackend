@@ -6,8 +6,12 @@
     margin: .5em 0; font-size: .8em;
 }
 
+.item-list {
+    font-size: 0;
+}
+
 .item {
-    width: 225px; margin: 4px 3px; display: inline-block; vertical-align: top; padding: 7px;
+    width: 225px; margin: 4px; display: inline-block; vertical-align: top; padding: 7px;
     border: 1px solid #cccccc; font-size: 13px;
     transition: background .5s;
 }
@@ -60,8 +64,16 @@
     max-height: 300px;
 }
 
+.facet-column {
+    float: left; width: 239px; margin-right: 10px;   
+}
+
+.facet-column dl {
+    border-right: 1px solid #cccccc; padding-right: 5px;
+}
+
 dt {
-    font-size: 0.9em; margin-top: .2em; font-weight: 500px;
+    font-size: 0.9em; margin-top: .4em; font-weight: 500;
 }
 
 dd {

@@ -1,7 +1,7 @@
 {% load marathontags %}
 Video of {{object.event.name}}
 Start time: {{object.start_time|date:"D d/m/Y H:i"}}
-End time: {{object.start_time|date:"D d/m/Y H:i"}}
+End time: {{object.end_time|date:"D d/m/Y H:i"}}
 Duration: {{object.duration|minsecs}}
 {% if object.runnertags.exists %}
     {% for tag in object.runnertags.all %}
@@ -14,7 +14,7 @@ Duration: {{object.duration|minsecs}}
         {{d.reference_point.distance_kilometres|floatformat:3}}km ({{d.reference_point.distance_miles|floatformat:3}}mi)
     {% endfor %}
     
-    Locations in video:
+    Locations:
     {% for l in object.locations %}
         {{l.location_name.name}}
     {% endfor %}

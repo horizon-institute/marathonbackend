@@ -5,8 +5,6 @@
 {% endblock %}
 
 {% block bottom_content %}
-<div class="two-columns">
-    <div class="column">
     <h2>Search</h2>
 
     <form method="get" action=".">
@@ -14,8 +12,8 @@
         <input type="submit" value="Search" />
     </form>
     </div>
-    <div class="column">
     {% if facets.fields %}
+    <div class="facet-column">
     <h2>Facets</h2>
     <dl>
     {% for name,facetfield in facets.fields.items %}
@@ -30,12 +28,11 @@
     {% endif %}
     {% endfor %}
     </dl>
-    {% endif %}
         
     </div>
-</div> 
+    {% endif %}
         {% if query %}
-        <h3>Results</h3>
+        <h2>Results</h2>
         <ul class="item-list">
             {% for result in page.object_list %}
             <li class="item">

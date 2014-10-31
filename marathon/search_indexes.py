@@ -7,6 +7,7 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
     event = indexes.CharField(model_attr="event__name", faceted=True)
     time = indexes.MultiValueField(faceted=True)
     distance = indexes.MultiValueField(faceted=True)
+    location = indexes.MultiValueField(faceted=True)
     thumbnail = indexes.CharField(model_attr="thumbnail")
     
     def prepare_distance(self, obj):
@@ -15,6 +16,9 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
             k = int(d.reference_point.distance/1000)
             res.append("%d-%dm"%(1000*k,1000*(k+1)))
         return res
+    
+    def prepare_location(self, obj):
+        return [l.location_name.name for l in object.locations]
     
     def prepare_time(self, obj):
         DELTA = 1800
