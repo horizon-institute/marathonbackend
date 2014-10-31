@@ -257,5 +257,5 @@ footer li {
 }
 
 .highlighted {
-    font-weight: bold;
+    font-weight: 500; background-color: #FFFFA0;
 }

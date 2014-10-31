@@ -8,6 +8,7 @@
                 var t = $(this).attr("data-video-time");
                 console.log("Seeking video to",t);
                 $("video")[0].currentTime = t;
+                return false;
             });
         });
     </script>
@@ -77,20 +78,25 @@
         
         <h2>Runner tags</h2>
         {% if object.runnertags.exists %}
-        <ul>
+        <ul class="tag-list">
         {% for tag in object.runnertags.all %}
-            <li data-video-time="{{tag.video_time}}" class="tag-pointer">
+            <li>
+                <a href="#" data-video-time="{{tag.video_time}}" class="tag-pointer">
             {% if tag.is_hot_tag %}
                 Hot tag
             {% else %}
                 {% with tag.race_result as rr %}
-                    {% if rr %}rr.name
+                    {% if rr %}
+                        rr.name
                         {% if rr.club %} from {{rr.club.name}}{% endif %}
+                    {% else %}
+                        Unknown Runner
                     {% endif %}
                 {% endwith %}
                 (#{{tag.runner_number}})
             {% endif %}
                 at {{tag.video_time|minsecs}}
+                </a>
             </li>
         </ul>
         {% endfor %}
