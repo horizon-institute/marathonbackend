@@ -18,7 +18,7 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
         return res
     
     def prepare_location(self, obj):
-        return [l.location_name.name for l in object.locations]
+        return [l.location_name.name for l in obj.locations]
     
     def prepare_time(self, obj):
         DELTA = 1800
