@@ -5,12 +5,29 @@
 {% endblock %}
 
 {% block bottom_content %}
+<div class="two-columns">
+    <div class="column">
     <h2>Search</h2>
 
     <form method="get" action=".">
-        {{ form.q }}
+        {{ form.as_ul }}
         <input type="submit" value="Search" />
-
+    </form>
+    </div>
+    <div class="column">
+    <h2>Facets</h2>
+    <dl>
+        <dt>Event</dt>
+        {% for event in facets.fields.event %}
+        <dd>
+            <a href="{{ request.get_full_path }}&amp;selected_facets=author_exact:{{ author.0|urlencode }}">{{ author.0 }}</a>
+            ({{ author.1 }})
+        </dd>
+        {% endfor %}
+    </dl>
+        
+    </div>
+</div> 
         {% if query %}
         <h3>Results</h3>
         <ul class="item-list">
@@ -40,5 +57,4 @@
         {% else %}
         <p>Try typing the name or number of a runner, the name of a street, a distance or a time!</p>
         {% endif %}
-    </form>
 {% endblock %}

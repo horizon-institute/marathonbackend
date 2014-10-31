@@ -8,9 +8,9 @@ from marathon.views import register, home, RunnerTagList, MyVideoList, AllVideos
 from marathon.models import Video
 from tastypie.api import Api
 from django.views.generic import TemplateView
-from haystack.views import SearchView, search_view_factory
+from haystack.views import FacetedSearchView, search_view_factory
 from haystack.query import SearchQuerySet
-from haystack.forms import ModelSearchForm
+from haystack.forms import FacetedSearchForm
 
 admin.autodiscover()
 
@@ -49,10 +49,10 @@ urlpatterns = patterns('',
                                   content_type='text/plain')),
     url(r'^video/(?P<pk>\d+)/', VideoDetail.as_view(), name="video_detail"),
     url(r'^search-video/', search_view_factory(
-        view_class=SearchView,
+        view_class=FacetedSearchView,
         template='search/search.html',
         searchqueryset=SearchQuerySet().models(Video),
-        form_class=ModelSearchForm
-    ), name='haystack_searc_video'),
+        form_class=FacetedSearchForm
+    ), name='haystack_search_video'),
    
 )
