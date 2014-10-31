@@ -20,8 +20,8 @@
         <dt>Event</dt>
         {% for event in facets.fields.event %}
         <dd>
-            <a href="{{ request.get_full_path }}&amp;selected_facets=author_exact:{{ author.0|urlencode }}">{{ author.0 }}</a>
-            ({{ author.1 }})
+            <a href="{{ request.get_full_path }}&amp;selected_facets=event_exact:{{ event.0|urlencode }}">{{ event.0 }}</a>
+            ({{ event.1 }})
         </dd>
         {% endfor %}
     </dl>
