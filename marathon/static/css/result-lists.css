@@ -21,7 +21,7 @@
 }
 
 .item-video img {
-    max-width: 100%; cursor: pointer; display: block; margin: 0 auto;
+    max-width: 100%; cursor: pointer; display: block; margin: 0 auto; max-height: 180px;
 }
 
 .fullwidth-item .item-video {
@@ -58,4 +58,12 @@
 
 .fullwidth-item .video-tags {
     max-height: 300px;
+}
+
+dt {
+    font-size: 0.9em; margin-top: .2em; font-weight: 500px;
+}
+
+dd {
+    font-size: 0.8em;
 }

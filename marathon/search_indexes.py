@@ -9,14 +9,14 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
     distance = indexes.MultiValueField(faceted=True)
     thumbnail = indexes.CharField(model_attr="thumbnail")
     
-    def prepare_time(self, obj):
+    def prepare_distance(self, obj):
         res = []
         for d in obj.videodistance_set.all():
             k = int(d.reference_point.distance/1000)
             res.append("%d-%dm"%(1000*k,1000*(k+1)))
         return res
     
-    def prepare_date(self, obj):
+    def prepare_time(self, obj):
         DELTA = 1800
         res = []
         mint = DELTA*int(obj.start_time.strftime("%s")/DELTA)

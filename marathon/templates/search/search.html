@@ -19,6 +19,7 @@
     <h2>Facets</h2>
     <dl>
     {% for name,facetfield in facets.fields.items %}
+    {% if facetfield %}
         <dt>{{name|capfirst}}</dt>
         {% for aspect in facetfield|slice:":5" %}
         <dd>
@@ -26,6 +27,7 @@
             ({{ aspect.1 }})
         </dd>
         {% endfor %}
+    {% endif %}
     {% endfor %}
     </dl>
     {% endif %}
