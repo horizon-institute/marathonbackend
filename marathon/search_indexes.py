@@ -19,7 +19,7 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_time(self, obj):
         DELTA = 1800
         res = []
-        mint = DELTA*int(obj.start_time.strftime("%s")/DELTA)
+        mint = DELTA*int(int(obj.start_time.strftime("%s"))/DELTA)
         maxt = int(obj.end_time.strftime("%s"))
         for t in range(mint, maxt, DELTA):
             res.append("%s-%s"%(datetime.fromtimestamp(t).strftime("%H:%M"),datetime.fromtimestamp(t+DELTA).strftime("%H:%M")))
