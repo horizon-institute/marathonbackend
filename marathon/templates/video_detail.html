@@ -87,7 +87,7 @@
             {% else %}
                 {% with tag.race_result as rr %}
                     {% if rr %}
-                        rr.name
+                        {{rr.name}}
                         {% if rr.club %} from {{rr.club.name}}{% endif %}
                     {% else %}
                         Unknown Runner

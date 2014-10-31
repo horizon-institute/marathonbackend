@@ -5,7 +5,7 @@ End time: {{object.start_time|date:"D d/m/Y H:i"}}
 Duration: {{object.duration|minsecs}}
 {% if object.runnertags.exists %}
     {% for tag in object.runnertags.all %}
-        {% if tag.is_hot_tag %}Hot tag{% else %}{% with tag.race_result as rr %}{% if rr %}rr.name{% if rr.club %} from {{rr.club.name}}{% endif %}{% else %}Unknown Runner{% endif %}{% endwith %} (#{{tag.runner_number}}){% endif %} at {{tag.video_time|minsecs}}
+        {% if tag.is_hot_tag %}Hot tag{% else %}{% with tag.race_result as rr %}{% if rr %}{{rr.name}}{% if rr.club %} from {{rr.club.name}}{% endif %}{% else %}Unknown Runner{% endif %}{% endwith %} (#{{tag.runner_number}}){% endif %} at {{tag.video_time|minsecs}}
     {% endfor %}
 {% endif %}
 {% if object.videodistance_set.exists %}
