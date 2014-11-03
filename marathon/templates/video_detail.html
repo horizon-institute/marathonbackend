@@ -15,19 +15,17 @@
                 [
                     {{d.reference_point.latitude}},
                     {{d.reference_point.longitude}},
-                    "{{d.reference_point.distance|floatformat:3}}km ({{d.reference_point.distance_miles|floatformat:3}}mi)"
-                ]
+                    "{{d.reference_point.distance_kilometres|floatformat:3}}km ({{d.reference_point.distance_miles|floatformat:3}}mi)"
+                ],
             {% endfor %}
             ];
     
         $(function() {
             $(".tag-pointer").click(function() {
                 var t = $(this).attr("data-video-time");
-                console.log("Seeking video to",t);
                 $("video")[0].currentTime = t;
                 return false;
             });
-            console.log("Loading map");
             var map = L.map("video-map"),
                 coords = basecoords;
                 
@@ -50,7 +48,6 @@
                 $.getJSON(geojson, function(data) {
                     for (var i = 0, l = data.features.length; i<l; i++) {
                         var feature = data.features[i];
-                        console.log(feature);
                         switch(feature.geometry.type) {
                             case "LineString":
                                 L.geoJson().addTo(map).addData(feature);
@@ -84,8 +81,8 @@
                 });
             }
             
-            for (var i = 0; l = locationmarkers.length; i++) {
-                L.marker(locationmarkers[i].slice(2)).bindPopup(locationmarkers[i][2]);
+            for (var i = 0, l = locationcoords.length; i<l; i++) {
+                L.marker(locationcoords[i].slice(0,2)).bindPopup(locationcoords[i][2]).addTo(map);
             }
             
         });
