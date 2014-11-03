@@ -5,7 +5,6 @@ from django.contrib.auth import urls as auth_urls
 from django.contrib.auth.decorators import login_required
 from marathon.api import SpectatorResource, EventResource, VideoResource, PositionUpdateResource, RunnerTagResource, FlaggedContentResource
 from marathon.views import register, home, RunnerTagList, MyVideoList, AllVideosList, MyTagList, AllTagsList, searchrunner, customlogin, VideoDetail
-from marathon.models import Video
 from tastypie.api import Api
 from django.views.generic import TemplateView
 from haystack.views import FacetedSearchView, search_view_factory
@@ -52,7 +51,7 @@ urlpatterns = patterns('',
         view_class=FacetedSearchView,
         template='search/search.html',
         searchqueryset=SearchQuerySet().facet("event").facet("distance").facet("time").facet("location"),
-        form_class=FacetedSearchForm
+        form_class=FacetedSearchForm,
     ), name='haystack_search_video'),
    
 )

@@ -16,3 +16,11 @@ video {
 .tag-list {
     font-size: .8em; margin: .2em 0;
 }
+
+.tag-list, .location-list {
+    max-height: 150px; overflow: auto;
+}
+
+#video-map {
+    height: 300px
+}

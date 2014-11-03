@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'provider',
     'provider.oauth2',
     'tastypie',
+    'haystack',
     'marathon',
 )
 
@@ -152,10 +153,6 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-        },
-        'tastypie': {
             'handlers': ['file'],
             'level': 'ERROR',
         },

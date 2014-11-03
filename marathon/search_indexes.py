@@ -33,4 +33,4 @@ class VideoIndex(indexes.SearchIndex, indexes.Indexable):
         return Video
     
     def index_queryset(self, using=None):
-        return self.get_model().objects.filter(online=True)
+        return self.get_model().objects.filter(online=True,event__public=True)

@@ -26,7 +26,10 @@ class Event(models.Model):
     date = models.DateField(db_index=True)
     public = models.BooleanField(db_index=True, default=False)
     is_current = models.BooleanField(db_index=True, default=False)
-    name = models.CharField(max_length=200, db_index=True)
+    name = models.CharField(max_length=200, db_index=True, unique=True)
+    geojson_url = models.CharField(max_length=200, db_index=True, blank=True, null=True, default=None)
+    latitude = models.FloatField(null=True, blank=True, db_index=True, default=None)
+    longitude = models.FloatField(null=True, blank=True, db_index=True, default=None)
     
     def save(self, *args, **kwargs):
         if self.is_current:

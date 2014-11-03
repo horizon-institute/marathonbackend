@@ -1,0 +1,39 @@
+{% if paginator.num_pages > 1 %}
+<div class="pagination">
+    Showing results {{ page.start_index }}-{{ page.end_index }} of {{paginator.count}}
+    &mdash; Pages:
+    {% if page.has_previous %}
+        <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">&laquo; Previous</a>
+    {% endif %}
+    
+    {% if page.number > 5 %}
+        <a href="?q={{ query }}&amp;page=1">1</a>
+        {% if page.number > 6 %}
+        &hellip;
+        {% endif %}
+    {% endif %}
+    
+    {% for p in paginator.page_range %}
+    {% if p == page.number %}
+        <strong>
+            {{p}}
+        </strong>
+    {% else %}
+        {% if p > page.number|add:-5 and p < page.number|add:5 %}
+        <a href="?q={{ query }}&amp;page={{ p }}">{{p}}</a>
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+    
+    {% if page.number < paginator.num_pages|add:-4 %}
+        {% if page.number < paginator.num_pages|add:-5 %}
+        &hellip;
+        {% endif %}
+        <a href="?q={{ query }}&amp;page={{paginator.num_pages}}">{{paginator.num_pages}}</a>
+    {% endif %}    
+    
+    {% if page.has_next %}
+        <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
