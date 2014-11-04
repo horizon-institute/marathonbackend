@@ -15,10 +15,12 @@
                 [
                     {{d.reference_point.latitude}},
                     {{d.reference_point.longitude}},
+                    {{d.accuracy}},
                     "{{d.reference_point.distance_kilometres|floatformat:3}}km ({{d.reference_point.distance_miles|floatformat:3}}mi)"
                 ],
             {% endfor %}
-            ];
+            ],
+            map;
     
         $(function() {
             $(".tag-pointer").click(function() {
@@ -26,8 +28,8 @@
                 $("video")[0].currentTime = t;
                 return false;
             });
-            var map = L.map("video-map"),
-                coords = basecoords;
+            map = L.map("video-map");
+            var coords = basecoords;
                 
             if (locationcoords.length) {
                 coords = [0,1].map(function(n) {
@@ -50,7 +52,12 @@
                         var feature = data.features[i];
                         switch(feature.geometry.type) {
                             case "LineString":
-                                L.geoJson().addTo(map).addData(feature);
+                                L.geoJson()
+                                    .setStyle({
+                                        color: "#800000"
+                                    })
+                                    .addTo(map)
+                                    .addData(feature);
                             break;
                             case "Point":
                                 switch(feature.properties.name) {
@@ -82,7 +89,15 @@
             }
             
             for (var i = 0, l = locationcoords.length; i<l; i++) {
-                L.marker(locationcoords[i].slice(0,2)).bindPopup(locationcoords[i][2]).addTo(map);
+                var coord = locationcoords[i],
+                    latlng = coord.slice(0,2);
+                L.marker(latlng).bindPopup(coord[3]).addTo(map);
+                L.circle(
+                    latlng, coord[2], {
+                        weight: 0,
+                        color: "#000080",
+                        opacity: .5
+                    }).addTo(map);
             }
             
         });
