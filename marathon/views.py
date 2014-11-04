@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from marathon.forms import UserForm, ContactRegistrationForm, RunnerSearchForm, CustomLoginForm
+from marathon.forms import UserForm, ConsentForm, RunnerSearchForm, CustomLoginForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.db.models import Count
@@ -7,6 +7,9 @@ from marathon.models import  Video, RunnerTag
 from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from haystack.views import FacetedSearchView, search_view_factory
+from haystack.query import SearchQuerySet
+from haystack.forms import FacetedSearchForm
 
 def register(request):
     if request.method == 'POST':
@@ -26,18 +29,22 @@ def register(request):
         'form': form,
     })
 
-def landing(request):
-    showform = True
+def consent_required(view_func):
+    def decorated_view(request, *args, **kwargs):
+        if (request.session.get("consent_given")):
+            return view_func(request, *args, **kwargs)
+        return HttpResponseRedirect(reverse("consent")+"?next="+request.path)
+    return decorated_view
+
+def consent(request):
     if request.method == 'POST':
-        form = ContactRegistrationForm(request.POST)
-        if form.is_valid():
-            showform = False
-            form.save()
+        form = ConsentForm(request.POST)
+        if form.is_valid() and form.cleaned_data.get("consent_given"):
+            request.session["consent_given"] = True
+            return HttpResponseRedirect(form.cleaned_data.get("next",reverse("landing")))
     else:
-        form = ContactRegistrationForm()
-    return render(request, "landing.html", {
-        'showform': showform,
-        'email': request.POST["email"] if request.method == 'POST' else None,
+        form = ConsentForm(request.GET)
+    return render(request, "consent_form.html", {
         'form': form,
     })
 
@@ -165,4 +172,10 @@ class AllTagsList(ListView):
 class VideoDetail(DetailView):
     template_name = "video_detail.html"
     model = Video
-    
+
+video_search_view = search_view_factory(
+        view_class=FacetedSearchView,
+        template='search/search.html',
+        searchqueryset=SearchQuerySet().facet("event").facet("distance").facet("time").facet("location"),
+        form_class=FacetedSearchForm,
+    )

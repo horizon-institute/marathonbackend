@@ -91,7 +91,15 @@ p {
     list-style: disc; padding-left: .5em; margin: .4em 0; line-height: 1.3em;
 }
 
-input, textarea, select, button {
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="submit"],
+input[type="search"],
+textarea,
+select,
+button {
     font-family: inherit; font-size: inherit;
     border: none; box-sizing: border-box; color: inherit;
     padding: .5em; margin: .25em 0; width: 100%;

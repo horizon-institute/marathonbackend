@@ -1,0 +1,21 @@
+{% extends "base_v2.html" %}
+{% load static from staticfiles %}
+
+{% block header_declarations %}
+        <link rel="stylesheet" type="text/css" href="{% static "css/landing.css" %}" />
+{% endblock %}
+
+{% block bottom_content %}
+
+<h2>Consent Form</h2>
+
+<p>This is a placeholder for a consent form</p>
+
+<form method="post">
+{% csrf_token %}
+    {{ form.next }}
+    <p>{{ form.consent_given }} I consent with the above terms</p>
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

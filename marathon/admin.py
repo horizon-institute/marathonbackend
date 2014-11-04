@@ -1,12 +1,21 @@
 from django.contrib import admin
-from marathon.models import Spectator, Event, Video, RunnerTag, PositionUpdate, ContactRegistration, ContentFlag
+from marathon.models import *
 
 # Register your models here.
 
-admin.site.register(Event)
-admin.site.register(Spectator)
-admin.site.register(Video)
-admin.site.register(RunnerTag)
-admin.site.register(PositionUpdate)
-admin.site.register(ContactRegistration)
-admin.site.register(ContentFlag)
+for m in [
+          Event,
+          Spectator,
+          Video,
+          RunnerTag,
+          PositionUpdate,
+          ContactRegistration,
+          ContentFlag,
+          RacePoint,
+          VideoDistance,
+          LocationName,
+          LocationDistance,
+          RunningClub,
+          RaceResult,
+      ]:
+    admin.site.register(m)
