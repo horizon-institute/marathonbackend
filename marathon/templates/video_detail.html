@@ -53,19 +53,17 @@
                         switch(feature.geometry.type) {
                             case "LineString":
                                 L.geoJson()
-                                    .setStyle({
-                                        color: "#800000"
-                                    })
                                     .addTo(map)
-                                    .addData(feature);
+                                    .addData(feature)
+                                    .setStyle({
+                                        color: "#c00000"
+                                    });
                             break;
                             case "Point":
-                                switch(feature.properties.name) {
-                                    case "START":
+                                switch((feature.properties.name||"").toLowerCase()) {
                                     case "start":
                                         var colour = "#008000";
                                     break;
-                                    case "FINISH":
                                     case "finish":
                                         var colour = "#ff0000";
                                     break;
@@ -94,8 +92,9 @@
                 L.marker(latlng).bindPopup(coord[3]).addTo(map);
                 L.circle(
                     latlng, coord[2], {
-                        weight: 0,
+                        weight: 1,
                         color: "#000080",
+                        fillColor: "#000080",
                         opacity: .5
                     }).addTo(map);
             }
