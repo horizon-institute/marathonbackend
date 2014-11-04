@@ -98,7 +98,7 @@ class Command(BaseCommand):
                     while candidatepoints:
                         lastdist = candidatepoints[0]["point"].distance
                         bestpoints.append(candidatepoints[0])
-                        candidatepoints = [p for p in candidatepoints if abs(p["point"].distance-lastdist) > otherleg]
+                        candidatepoints = [p for p in candidatepoints if p["delta"] < locobj.accuracy and abs(p["point"].distance-lastdist) > otherleg]
                     pointcache[cachekey] = bestpoints
                     if (len(bestpoints) > 1):
                         print "Ambiguous location: %s"%(",".join(["%dm"%p["point"].distance for p in bestpoints]))
