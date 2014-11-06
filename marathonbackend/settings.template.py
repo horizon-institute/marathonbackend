@@ -158,3 +158,7 @@ LOGGING = {
         },
     }
 }
+
+HAYSTACK_CUSTOM_HIGHLIGHTER = 'marathon.utils.MyHighlighter'
+
+GOOGLE_ANALYTICS_ID = ""

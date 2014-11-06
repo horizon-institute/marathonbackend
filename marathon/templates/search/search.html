@@ -2,6 +2,7 @@
 {% load highlight %}
 {% block header_declarations %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/result-lists.css" />
+    {% include "partials/google_analytics.html" %}
 {% endblock %}
 
 {% block title %}{{block.super}}: Search for a video{% endblock %}
