@@ -13,6 +13,8 @@ from marathon.views import (
                             )
 from tastypie.api import Api
 from django.views.generic import TemplateView
+from jsonrpc import jsonrpc_site
+from marathon.rpc import request_video_upload_url
 
 admin.autodiscover()
 
@@ -49,5 +51,6 @@ urlpatterns = patterns('',
                                   content_type='text/plain')),
     url(r'^video/(?P<pk>\d+)/', VideoDetail.as_view(), name="video_detail"),
     url(r'^search-video/', consent_required(video_search_view), name='haystack_search_video'),
+    url(r'^jsonrpc/$', login_required(jsonrpc_site.dispatch), name = 'jsonrpc_mountpoint')
    
 )
