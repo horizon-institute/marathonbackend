@@ -169,5 +169,6 @@ AZURE_CONFIG = {
     'account_name' : '',
     'account_key' : '',
     'video_upload_container' : '',
+    'video_encode_queue' : '',
     'relative_expiry_time' : relativedelta(months = 1)
 }

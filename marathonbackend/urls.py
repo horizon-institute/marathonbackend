@@ -14,7 +14,10 @@ from marathon.views import (
 from tastypie.api import Api
 from django.views.generic import TemplateView
 from jsonrpc import jsonrpc_site
-from marathon.rpc import request_video_upload_url
+from marathon.rpc import (
+                          request_video_upload_url,
+                          submit_video_encoding_job
+                          )
 
 admin.autodiscover()
 
