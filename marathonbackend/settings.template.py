@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'provider.oauth2',
     'tastypie',
     'haystack',
+    'jsonrpc',
     'marathon',
 )
 
@@ -162,3 +163,12 @@ LOGGING = {
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'marathon.utils.MyHighlighter'
 
 GOOGLE_ANALYTICS_ID = ""
+
+from dateutil.relativedelta import relativedelta
+AZURE_CONFIG = {
+    'account_name' : '',
+    'account_key' : '',
+    'video_upload_container' : '',
+    'video_encode_queue' : '',
+    'relative_expiry_time' : relativedelta(months = 1)
+}
