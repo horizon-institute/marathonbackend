@@ -66,6 +66,9 @@ class PositionUpdate(GUIDModel):
         return "%s at %s"%(self.spectator.name, self.time)
 
 class Video(GUIDModel):
+    UPLOAD_STATUS_CREATED = 0
+    UPLOAD_STATUS_UPLOADING = 1
+    UPLOAD_STATUS_UPLOADED = 2
     event = models.ForeignKey(Event, related_name="videos", db_index=True, null=False, blank=False)
     spectator = models.ForeignKey(Spectator, related_name="videos", db_index=True, null=False, blank=False)
     start_time = models.DateTimeField(db_index=True, null=False, blank=False, default=datetime.datetime.now)
@@ -76,6 +79,14 @@ class Video(GUIDModel):
     public = models.BooleanField(db_index=True, default=False)
     thumbnail = models.CharField(max_length=300, default="")
     server_last_modified = models.DateTimeField(db_index=True, null=True, blank=True, default=None)
+    latitude = models.FloatField(null=False, blank=False, db_index=True, default=0.0)
+    longitude = models.FloatField(null=False, blank=False, db_index=True, default=0.0)
+    accuracy = models.FloatField(null=False, blank=False, db_index=True, default=-1.0)
+    upload_status = models.IntegerField(null=False, blank=False, choices=(
+                                                                          (UPLOAD_STATUS_CREATED, 'Created'),
+                                                                          (UPLOAD_STATUS_UPLOADING, 'Uploading'),
+                                                                          (UPLOAD_STATUS_UPLOADED, 'Uploaded') 
+                                                                          ), default=UPLOAD_STATUS_CREATED)
     
     @property
     def end_time(self):
