@@ -87,6 +87,7 @@ class Video(GUIDModel):
                                                                           (UPLOAD_STATUS_UPLOADING, 'Uploading'),
                                                                           (UPLOAD_STATUS_UPLOADED, 'Uploaded') 
                                                                           ), default=UPLOAD_STATUS_CREATED)
+    filename = models.CharField(max_length=300, default="", db_index=True, blank=True)
     
     @property
     def end_time(self):
