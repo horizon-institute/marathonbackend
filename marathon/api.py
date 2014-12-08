@@ -240,7 +240,8 @@ class VideoResource(LoggedMixin, resources.ModelResource):
     class Meta:
         queryset = Video.objects.select_related('spectator','event').order_by("-start_time")
         resource_name = 'video'
-        fields = ['id', 'guid', 'start_time', 'duration', 'public', 'url']
+        fields = ['id', 'guid', 'start_time', 'duration', 'public', 'url', 
+                  'latitude', 'longitude', 'accuracy', 'upload_status']
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = LoggedMultiAuthentication()
         authorization = VideoAuthorization()
