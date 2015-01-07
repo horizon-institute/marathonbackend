@@ -9,6 +9,7 @@ from azure.storage import (
                             SharedAccessSignature
                           )
 import urllib
+import base64
 from datetime import datetime
 import hashlib
 from django.views.decorators.csrf import csrf_exempt
@@ -90,7 +91,7 @@ def submit_video_encoding_job(request, video_guid = None):
     
     qs.put_message(
         queue_name = settings.AZURE_CONFIG['video_encode_queue'],
-        message_text = blob_name)
+        message_text = base64.b64encode(blob_name))
     
     return None
 
